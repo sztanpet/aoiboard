@@ -1,4 +1,5 @@
 <?php include('./html/header.html.php'); ?>
+<?php include('./html/component/menu.html.php'); ?>
 <div class="top">
 <?php include('./html/component/pager.html.php'); ?>
 </div>
@@ -13,7 +14,7 @@
 		<?php endif; ?>
 		<a class="orig_url" href="<?php print htmlspecialchars($item->original_url); ?>">original link</a>
 	</div>
-	<?php endforeach; ?>
+<?php endforeach; ?>
 </div>
 <div class="bottom">
 <?php include('./html/component/pager.html.php'); ?>

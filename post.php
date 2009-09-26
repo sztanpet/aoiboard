@@ -1,8 +1,9 @@
 <?php
 mb_internal_encoding('utf-8');
-include('./constants.php');
-include('./functions.php');
-include('./model.php');
+include('./lib/constants.php');
+include('./lib/functions.php');
+include('./model/db.class.php');
+include('./model/pic.class.php');
 
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);
@@ -19,7 +20,7 @@ $page = open_page($url, $f, $c, $r, $a, $cf, $pd);
 */
 
 $time       = $_SERVER['REQUEST_TIME'];
-$file_name  = $time.rand(0,100);
+$file_name  = '/'.$time.rand(0,100);
 $tmp_path   = TMP_PATH.$file_name;
 
 shell_exec("wget -U 'Opera/9.24 (X11; Linux i686; U; en)' -c '".escapeshellcmd($url)."' -o /dev/null -O ".$tmp_path);
@@ -46,7 +47,7 @@ rename($tmp_path, $path);
 $thumb_path = THUMB_PATH.$file_name.'.jpg';
 create_thumb($path, $thumb_path);
 
-$item = new Item(array(
+$item = new Pic(array(
 	'nick'         => $nick,
 	'original_url' => $url,
 	'path'         => $path,
@@ -54,13 +55,14 @@ $item = new Item(array(
 	'thumb'        => $thumb_path,
 	'time'         => date('Y-m-d H:m:s', $time),
 ));
-$items = new DB(array('db' => DB_PATH, 'item_class' => 'Item'));
-$items->lock();
-if ($items->is_uniq($item)) {
-	$items->add($item);
-	$items->save();
+$db = new DB(array('db' => DB_PIC_PATH, 'item_class' => 'Pic'));
+$db->lock();
+$db->load();
+if ($db->is_uniq($item)) {
+	$db->add($item);
+	$db->save();
 } else {
 	unlink($path);
 	unlink($thumb_path);
 }
-$items->unlock();
+$db->unlock();

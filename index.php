@@ -1,15 +1,19 @@
 <?php
 mb_internal_encoding('utf-8');
-include('./model.php');
-include('./constants.php');
-$db  = new DB(array('db' => DB_PATH, 'item_class' => 'Item'));
+
+include('./model/pic.class.php');
+include('./model/db.class.php');
+include('./lib/constants.php');
+
+$db  = new DB(array('db' => DB_PIC_PATH, 'item_class' => 'Pic'));
+$db->load();
 
 $params = array();
 
 if (isset($_REQUEST['limit']) && (int)$_REQUEST['limit'] > 0) {
 	$limit = (int)$_REQUEST['limit'];
 } else {
-	$limit = PAGE_LIMIT;
+	$limit = PAGE_LIMIT_PIC;
 }
 
 if (isset($_GET['page']) && (int)$_GET['page'] >= 0) {
