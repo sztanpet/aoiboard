@@ -15,7 +15,7 @@ shell_exec("wget -U 'Opera/9.24 (X11; Linux i686; U; en)' -c '".escapeshellcmd($
 
 $title = $url;
 if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($tmp_path), $match)) {
-	$title = $match['title'];
+	$title = html_entity_decode($match['title']);
 }
 unlink($tmp_path);
 
