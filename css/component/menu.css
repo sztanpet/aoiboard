@@ -1,0 +1,21 @@
+#menu {
+	padding:0;
+	margin:0;
+	position:fixed;
+	top:0em;
+	right:0em;
+	list-style:none;
+	border-bottom:1px solid gray;
+	border-left:1px solid gray;
+	font-size:1.2em;
+	padding: 0.42em 0.42em 0.42em 0em;
+	font-weight:bold;
+}
+#menu li {
+	display:inline;
+	padding-left:0.42em;
+}
+
+#menu li a {
+	text-decoration:none;
+}

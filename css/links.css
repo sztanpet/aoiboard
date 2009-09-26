@@ -1,0 +1,29 @@
+#links {
+	margin-left:5em;
+	border-collapse:collapse;
+}
+
+#links thead {
+	border-bottom:1px solid gray;
+	font-weight:bold;
+}
+
+#links .nick,
+#links .time {
+	width:15%;
+}
+
+#links .nick {
+	text-align:left;
+}
+
+#links .time {
+	text-align:right;
+}
+
+#links .url {
+	width:70%;
+	text-align:center;
+	border-left:1px solid gray;
+	border-right:1px solid gray;
+}
