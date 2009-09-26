@@ -19,7 +19,7 @@ $page = open_page($url, $f, $c, $r, $a, $cf, $pd);
 */
 
 $time       = $_SERVER['REQUEST_TIME'];
-$file_name  = '/'.$time.rand(0,100);
+$file_name  = $time.rand(0,100);
 $tmp_path   = TMP_PATH.$file_name;
 
 shell_exec("wget -U 'Opera/9.24 (X11; Linux i686; U; en)' -c '".escapeshellcmd($url)."' -o /dev/null -O ".$tmp_path);
