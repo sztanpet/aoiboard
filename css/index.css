@@ -1,0 +1,41 @@
+body {
+	background-color:#d0d0d0;
+}
+
+#images {
+	margin-left:5em;
+}
+
+#images .image {
+	display:inline-block;
+	width:220px;
+	margin:1em 0em;
+	text-align:center;
+	min-height:200px;
+}
+
+#images .image a:link img {
+	border:1px solid blue;
+}
+
+#images .image a:visited img {
+	border:2px solid #551A8B;
+}
+
+#images .image span {
+	display:block;
+}
+
+#images .image .nick {
+	font-size:0.9em;
+}
+
+#images .image .time {
+	font-size:0.8em;
+}
+
+#images .image .comment {
+	color:gray;
+	font-style:italic;
+	font-size:0.8em;
+}
