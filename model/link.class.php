@@ -66,7 +66,6 @@ class Link extends Item {
 		if (!empty($errors)) {
 			throw new Exception(var_export($errors, true));
 		}
-
 	}
 	
 	public static function fromCSV($csv_array) {
@@ -107,5 +106,4 @@ class Link extends Item {
 	public function getAttr() {
 		return self::$attr;
 	}
-
 }

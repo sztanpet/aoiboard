@@ -1,5 +1,6 @@
 <?php
 include('./lib/constants.php');
+include_once('./model/item.class.php');
 
 class DB{
 	private $db   = '';
@@ -21,7 +22,7 @@ class DB{
 			throw new Exception('set both read and write premissions on: '.$params['db']);
 		}
 
-		if (!isset($params['item_class']) || !class_exists($params['item_class'])) {
+		if (!isset($params['item_class']) || !class_exists($params['item_class']) && $params['item_class'] instanceof Item) {
 			throw new Exception('set item_class to valid class name, given: '.$params['item_class']);
 		}
 
@@ -31,16 +32,20 @@ class DB{
 
 	public function load() {
 		$lines = file($this->db, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$tmp   = array();
 		foreach ($lines as $line) {
-			$tmp[] = explode(";", $line);
+			try {
+				$this->list[] = call_user_func(array($this->item_class, 'fromCSV'), (explode(";", $line)));
+			} catch (Exception $e) {} // skip missing files
 		}
-		$this->list = array_map(array($this->item_class, 'fromCSV'), $tmp);
+		return true;
 	}
 
 	public function lock($path = '') {
 		if ($path === '' && $this->fd !== null) {
 			return true;
+		}
+		if ($path !== '' && $this->fd !== null) {
+			$this->unlock();
 		}
 		$path = ($path === '') ? $this->db : $path;
 		$this->fd = fopen($path, 'r');
@@ -68,7 +73,7 @@ class DB{
 			$lines[] = $item->toCSV();
 		}
 		file_put_contents($tmp_name, $lines);
-		$is_locked = is_resource($this->fd) ? true : false;
+		$is_locked = $this->fd === null ? true : false;
 		if ($is_locked) {
 			$this->unlock();
 			$this->lock($tmp_name);
@@ -81,9 +86,13 @@ class DB{
 		$list = $this->list;
 		$re   = array();
 
-		foreach ($this->list as $item) {
-			if ($item->match($params)) {
-				$re[] = $item;
+		if (empty($params)) {
+			$re = $this->list;
+		} else {
+			foreach ($this->list as $item) {
+				if ($item->match($params)) {
+					$re[] = $item;
+				}
 			}
 		}
 

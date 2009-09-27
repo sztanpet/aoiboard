@@ -9,3 +9,4 @@ define('THUMB_WIDTH'    , 200);
 define('THUMB_HEIGHT'   , 200);
 define('PAGE_LIMIT_PIC' , 18);
 define('PAGE_LIMIT_LINK', 50);
+define('PAGER_LIMIT'    , 13);
