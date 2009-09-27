@@ -82,7 +82,7 @@ class Pic extends Item {
 		}
 		 
 		if (isset($params['path'])) {
-			if (is_file($params['path'])) {
+			if (is_file($params['path']) && is_readable($params['path'])) {
 				$this->data['path'] = $params['path'];
 			} else {
 				$errors['path'] = 'no suck file path: '.$params['path'];
@@ -92,7 +92,7 @@ class Pic extends Item {
 		}
 
 		if (isset($params['thumb'])) {
-			if (is_file($params['thumb'])) {
+			if (is_file($params['thumb']) && is_readable($params['thumb'])) {
 				$this->data['thumb'] = $params['thumb'];
 			} else {
 				$errors['thumb'] = 'no suck file: '.$params['thumb'];

@@ -6,7 +6,7 @@
 <div id="images">
 <?php foreach (array_reverse($items) as $item): ?>
 	<div class="image">
-		<a class="thumb" href="<?php print $item->path; ?>"><img src="<?php print $item->thumb; ?>"/></a>
+		<a class="thumb" href="<?php print $item->path; ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
 		<span class="nick"><?php print htmlspecialchars($item->nick); ?></span>
 		<span class="time"><?php print htmlspecialchars($item->time); ?></span>
 		<?php if (trim($item->comment) !== ''): ?>

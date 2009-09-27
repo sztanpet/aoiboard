@@ -1,6 +1,7 @@
 .pager {
 	text-align:center;
 	font-weight:bold;
+	margin:0em 10em;
 }
 .pager .left,
 .pager .right,

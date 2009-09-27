@@ -11,7 +11,7 @@ $css_files = array(
 	'./css/component/menu.css',
 );
 
-$db  = new DB(array('db' => DB_LINK_PATH, 'item_class' => 'Link'));
+$db = new DB(array('db' => DB_LINK_PATH, 'item_class' => 'Link'));
 $db->load();
 
 $params = array();
@@ -40,7 +40,11 @@ $offset  = isset($offset) ? (int)$offset : (int)$limit * $maxpage;
 $items   = array_slice($items, $offset, $limit);
 $page    = isset($page) ? $page : (int)$maxpage;
 
-$urlparams = array('page' => $page, 'nick' => $nick, 'limit' => ($limit != PAGE_LIMIT && isset($_GET['limit'])) ? $limit : null);
+$urlparams = array(
+	'page'  => $page, 
+	'nick'  => $nick, 
+	'limit' => ($limit != PAGE_LIMIT_LINK && isset($_GET['limit'])) ? $limit : null
+);
 
 include('./html/links.html.php');
 

@@ -14,21 +14,17 @@ abstract class Item {
 	abstract public static function fromCSV($csv_array);
 
 	public function __construct($params) {
-		foreach (array_keys($this->getAttr()) as $attr) {
-			$this->data[$attr] = null;		
-		}
 		self::$attr = $this->getAttr();
+		$this->data = array_fill_keys(array_keys(self::$attr), null);
 	}
 
 	public function match($params) {
 		$match = true;
 
-		foreach ($this->data as $k => $v) {
-			if (isset($params[$k])) {
-				$match = $params[$k] === $this->data[$k] ? true : false;
-				if (!$match) {
-					return false;
-				}
+		foreach (array_keys(array_intersect_key($this->data, $params)) as $k) {
+			$match = $params[$k] === $this->data[$k] ? true : false;
+			if (!$match) {
+				return false;
 			}
 		}
 		return true;

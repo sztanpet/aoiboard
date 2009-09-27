@@ -40,7 +40,11 @@ $offset  = isset($offset) ? (int)$offset : (int)$limit * $maxpage;
 $items   = array_slice($items, $offset, $limit);
 $page    = isset($page) ? $page : (int)$maxpage;
 
-$urlparams = array('page' => $page, 'nick' => $nick, 'limit' => ($limit != PAGE_LIMIT && isset($_GET['limit'])) ? $limit : null);
+$urlparams = array(
+	'page'  => $page, 
+	'nick'  => $nick, 
+	'limit' => ($limit != PAGE_LIMIT_PIC && isset($_GET['limit'])) ? $limit : null
+);
 
 include('./html/index.html.php');
 
