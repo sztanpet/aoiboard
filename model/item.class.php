@@ -17,6 +17,7 @@ abstract class Item {
 		foreach (array_keys($this->getAttr()) as $attr) {
 			$this->data[$attr] = null;		
 		}
+		self::$attr = $this->getAttr();
 	}
 
 	public function match($params) {
@@ -34,11 +35,10 @@ abstract class Item {
 	}
 
 	public function __set($name, $value) {
-		$attr = $this->getAttr();
-		if (isset($attr[$name])) {
-			if (in_array($attr[$name]['type'], array('wo', 'rw',))){
-				if ($attr[$name]['write'] !== '') {
-					call_user_func(array($this, $attr[$name]['write']), $value);
+		if (isset(self::$attr[$name])) {
+			if (in_array(self::$attr[$name]['type'], array('wo', 'rw',))){
+				if (self::$attr[$name]['write'] !== '') {
+					call_user_func(array($this, self::$attr[$name]['write']), $value);
 				} else {
 					$this->data[$name] = $value;
 				}
@@ -51,11 +51,10 @@ abstract class Item {
 	}
 	
 	public function __get($name) {
-		$attr = $this->getAttr();
-		if (isset($attr[$name])) {
-			if (in_array($attr[$name]['type'], array('ro', 'rw',))){
-				if ($attr[$name]['read'] !== '') {
-					return call_user_func(array($this, $attr[$name]['read']), $value);
+		if (isset(self::$attr[$name])) {
+			if (in_array(self::$attr[$name]['type'], array('ro', 'rw',))){
+				if (self::$attr[$name]['read'] !== '') {
+					return call_user_func(array($this, self::$attr[$name]['read']), $value);
 				} else {
 					return $this->data[$name];
 				}

@@ -34,7 +34,7 @@ class DB{
 		$lines = file($this->db, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		foreach ($lines as $line) {
 			try {
-				$this->list[] = call_user_func(array($this->item_class, 'fromCSV'), (explode(";", $line)));
+				$this->list[] = call_user_func(array($this->item_class, 'fromCSV'), explode(";", $line));
 			} catch (Exception $e) {} // skip missing files
 		}
 		return true;
