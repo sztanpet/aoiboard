@@ -21,8 +21,8 @@ class DB{
 		if (!is_readable($params['db']) || !is_writeable($params['db'])) {
 			throw new Exception('set both read and write premissions on: '.$params['db']);
 		}
-
-		if (!isset($params['item_class']) || !class_exists($params['item_class']) && $params['item_class'] instanceof Item) {
+		
+		if (!isset($params['item_class']) || !class_exists($params['item_class'])) {
 			throw new Exception('set item_class to valid class name, given: '.$params['item_class']);
 		}
 
