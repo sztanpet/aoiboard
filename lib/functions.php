@@ -62,3 +62,105 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 	imageDestroy($t_im);
 	return true;
 }
+
+function render_iterator($class, $page_limit, $template, $css_files) {
+	if (isset($_REQUEST['limit']) && (int)$_REQUEST['limit'] > 0) {
+		$limit = (int)$_REQUEST['limit'];
+	} else {
+		$limit = $page_limit;
+	}
+
+	if (isset($_GET['page']) && (int)$_GET['page'] >= 0) {
+		$offset = $limit * (int)$_GET['page'];
+		$page = (int)$_GET['page'];
+	}
+
+	if (isset($_GET['nick']) && trim($_GET['nick']) !== '') {
+		$params['nick'] = rawurldecode($_GET['nick']);
+		$nick = $params['nick'];
+	} else {
+		$nick = null;
+	}
+
+	if (isset($_GET['day'])) {
+		if ($_GET['day'] == 'last' || $_GET['day'] == 'tomorrow') {
+			$params['ctime'] = array(
+				'apply' => 'DATE(@@ctime@@)',
+				'value' => date("Y-m-d", strtotime('-1 day')),
+			);
+		}
+
+		if ($_GET['day'] == 'today') {
+			$params['ctime'] = array(
+				'apply' => 'DATE(@@ctime@@)',
+				'value' => date("Y-m-d", $_SERVER['REQUEST_TIME']),
+			);
+		}
+
+		if (preg_match('/^\d{4}-\d\d-\d\d$/', $_GET['day'])) {
+			$params['ctime'] = array(
+				'apply' => 'DATE(@@ctime@@)',
+				'value' => $_GET['day'],
+			);
+		}
+
+		if (preg_match('/^-\d$/', $_GET['day'])) {
+			$params['ctime'] = array(
+				'apply' => 'DATE(@@ctime@@)',
+				'value' => date('Y-m-d', strtotime($_GET['day'].' day')),
+			);
+		}
+
+		if (preg_match('/^(?<type>from|to)_(?<date>\d{4}-\d\d-\d\d|-\d+)$/', $_GET['day'], $tmp)) {
+			$params['ctime'] = array(
+				'apply' => 'DATE(@@ctime@@)',
+			);
+
+			if (substr($tmp['date'], 0, 1) == '-') {
+				$params['ctime']['value'] = date('Y-m-d', strtotime($tmp['date'].' day'));
+			} else {
+				$params['ctime']['value'] = $tmp['date'];
+			}
+			if ($tmp['type'] == 'from') {
+				$params['ctime']['cmp'] = '>=';
+			} elseif ($tmp['type'] == 'to') {
+				$params['ctime']['cmp'] = '<=';
+			}
+		}
+	}
+
+	if (isset($_GET['week']) && (in_array($_GET['week'], array('last', 'this')) || preg_match('/^-\d+$/', $_GET['week']))) {
+		if ($_GET['week'] == 'last') {
+			$start = strtotime('-1 week', strtotime('last Monday'));
+		} elseif ($_GET['week'] == 'this') {
+			$start = strtotime('last Monday');
+		} else {
+			$start = strtotime($_GET['week'].' week', strtotime('last Monday'));
+		}
+		$days = array();
+		for ($i = 0; $i < 7; ++$i) {
+			$days[] = date('Y-m-d', strtotime('+'.$i.' day', $start));
+		}
+		$params['ctime'] = array(
+			'apply' => 'DATE(@@ctime@@)',
+			'value' => $days,
+		);
+	}
+
+	$maxpage = max(ceil(call_user_func(array($class, 'get_count'), ($params)) / $limit) - 1, 0);
+	$offset  = isset($offset) ? (int)$offset : (int)$limit * $maxpage;
+	$page    = isset($page) ? $page : (int)$maxpage;
+
+	$items   = call_user_func(array($class, 'get'), $params, '', array($offset, $limit));
+	$items->reverse();
+
+	$urlparams = array(
+		'page'  => $page, 
+		'nick'  => $nick, 
+		'day'   => isset($params['ctime']) ? $_GET['day']  : null,
+		'week'  => isset($params['ctime']) ? $_GET['week'] : null,
+		'limit' => ($limit != $page_limit && isset($_GET['limit'])) ? $limit : null
+	);
+
+	include(APPROOT.'/'.$template);
+}

@@ -1,51 +1,56 @@
 <?php
-include('./lib/constants.php');
-include_once('model/item.class.php');
+include_once(APPROOT.'/model/item.class.php');
+include_once(APPROOT.'/model/itemiterator.class.php');
 
 class Pic extends Item {
-	
-	const INDEX_CHECKSUM     = 0;
-	const INDEX_TIME         = 1;
-	const INDEX_NICK         = 2;
-	const INDEX_PATH         = 3;
-	const INDEX_THUMB        = 4;
-	const INDEX_ORIGINAL_URL = 5;
-	const INDEX_COMMENT      = 6;
+
+	const TABLE_NAME = 'pic';
+	const ID_COLUMN  = 'id';
 
 	protected static $attr = array(
-		'time' => array(
-			'type'  => 'ro', 
+		'id' => array(
+			'type'  => 'r', 
+			'read'  => '', 
+			'write' => '',
+		),
+		'ctime' => array(
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'original_url' => array(
-			'type'  => 'ro', 
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'thumb' => array(
-			'type'  => 'ro', 
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'nick' => array(
-			'type'  => 'ro', 
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'path' => array(
-			'type'  => 'ro', 
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'comment' => array(
-			'type'  => 'ro', 
+			'type'  => 'r', 
 			'read'  => '', 
 			'write' => '',
 		),
 		'checksum' => array(
-			'type' => 'ro',
-			'read' => '',
+			'type'  => 'r',
+			'read'  => '',
+			'write' => '',
+		),
+		'deleted' => array(
+			'type'  => 'r',
+			'read'  => '',
 			'write' => '',
 		),
 	);
@@ -57,106 +62,104 @@ class Pic extends Item {
 		$errors = array();
 		$params = array_map('trim', $params);
 
-		if (isset($params['nick']) && $params['nick'] !== '') {
-			$this->data['nick'] = $params['nick'];
-		} else {
-			$errors['nick'] = 'no nick given';
+		if (isset($params['id'])) {
+			$this->data['id'] = (int)$params['id'];
 		}
-		
-		if (isset($params['original_url']) && $params['original_url'] !== '') {
-			$this->data['original_url'] = $params['original_url'];
+		if (count(array_diff(array_keys($params), array('id'))) == 0) {
+			$this->load();
 		} else {
-			$errors['original_url'] = 'no original_url given';
-		}
 
-		if (isset($params['comment'])) {
-			$this->data['comment'] = $params['comment'];
-		} else {
-			$errors['comment'] = 'no comment given';
-		}
-		
-		if (isset($params['time']) && preg_match('/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/', $params['time'])) {
-			$this->data['time'] = $params['time'];
-		} else {
-			$errors['time'] = 'no time given';
-		}
-		 
-		if (isset($params['path'])) {
-			if (is_file($params['path']) && is_readable($params['path'])) {
-				$this->data['path'] = $params['path'];
+			if (isset($params['nick']) && $params['nick'] !== '') {
+				$this->data['nick'] = $params['nick'];
 			} else {
-				$errors['path'] = 'no suck file path: '.$params['path'];
+				$errors['nick'] = 'no nick given';
 			}
-		} else {
-			$errors['path'] = 'no path given';
-		}
 
-		if (isset($params['thumb'])) {
-			if (is_file($params['thumb']) && is_readable($params['thumb'])) {
-				$this->data['thumb'] = $params['thumb'];
+			if (isset($params['original_url']) && $params['original_url'] !== '') {
+				$this->data['original_url'] = $params['original_url'];
 			} else {
-				$errors['thumb'] = 'no suck file: '.$params['thumb'];
+				$errors['original_url'] = 'no original_url given';
 			}
-		} else {
-			$errors['thumb'] = 'no thumb given';
+
+			if (isset($params['comment'])) {
+				$this->data['comment'] = $params['comment'];
+			} else {
+				$errors['comment'] = 'no comment given';
+			}
+
+			if (isset($params['ctime']) && preg_match('/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/', $params['ctime'])) {
+				$this->data['ctime'] = $params['ctime'];
+			} else {
+				$errors['ctime'] = 'no ctime given';
+			}
+			
+			if (isset($params['deleted'])) {
+				$this->data['deleted'] = $params['deleted'] === 'N' ? false : (bool)$params['deleted'];
+			} else {
+				$this->data['deleted'] = false;
+			}
+
+			if (!$this->data['deleted']) {
+				if (isset($params['path'])) {
+					if (is_file($params['path']) && is_readable($params['path'])) {
+						$this->data['path'] = $params['path'];
+					} else {
+						$errors['path'] = 'no suck file path: '.$params['path'];
+					}
+				} else {
+					$errors['path'] = 'no path given';
+				}
+			}
+
+			if (isset($params['thumb'])) {
+				if (is_file($params['thumb']) && is_readable($params['thumb'])) {
+					$this->data['thumb'] = $params['thumb'];
+				} else {
+					$errors['thumb'] = 'no suck file: '.$params['thumb'];
+				}
+			} else {
+				$errors['thumb'] = 'no thumb given';
+			}
+
+			if (!empty($errors)) {
+				throw new Exception(var_export($errors, true));
+			}
+
+
+			if (!isset($params['checksum'])) {
+				$this->data['checksum'] = md5_file($params['path']);
+			} else {
+				$this->data['checksum'] = $params['checksum'];
+			}
 		}
-
-		if (!empty($errors)) {
-			throw new Exception(var_export($errors, true));
-		}
-
-		if (!isset($params['checksum'])) {
-			$this->data['checksum'] = md5_file($params['path']);
-		} else {
-			$this->data['checksum'] = $params['checksum'];
-		}
-	}
-
-	public static function fromCSV($csv_array) {
-		return new self(array(
-			'checksum'     => $csv_array[self::INDEX_CHECKSUM],
-			'time'         => $csv_array[self::INDEX_TIME],
-			'nick'         => $csv_array[self::INDEX_NICK],
-			'path'         => $csv_array[self::INDEX_PATH],
-			'thumb'        => $csv_array[self::INDEX_THUMB],
-			'comment'      => $csv_array[self::INDEX_COMMENT],
-			'original_url' => $csv_array[self::INDEX_ORIGINAL_URL],
-		));
-	}
-
-	public function toCSVarray() {
-		$re = array (
-			self::INDEX_CHECKSUM     => $this->checksum,
-			self::INDEX_TIME         => $this->time,
-			self::INDEX_NICK         => str_replace(array(';', "\n", "\r"), '', $this->nick),
-			self::INDEX_PATH         => str_replace(array(';', "\n", "\r"), '', $this->path),
-			self::INDEX_THUMB        => str_replace(array(';', "\n", "\r"), '', $this->thumb),
-			self::INDEX_ORIGINAL_URL => str_replace(array(';', "\n", "\r"), '', $this->original_url),
-			self::INDEX_COMMENT      => str_replace(array(';', "\n", "\r"), '', $this->comment),
-		);
-		ksort($re);
-		return $re;
-	}
-
-	public function toCSV() {
-		return join(';', $this->toCSVarray())."\r\n";
 	}
 
 	public function delete() {
 		unlink($this->path);
-		unlink($this->thumb);
+
+		$dbcnx = parent::dbcnx();
+		$q    = 'update '.self::TABLE_NAME.' set deleted = 1 where id = :id';
+		$stmt = $dbcnx->prepare($q);
+		$stmt->execute(array(':id' => $this->data['id']));
 	}
 
-	public function match($params) {
-		if ($params instanceof self) {
-			return $params->checksum === $this->checksum ? true : false; 
-		}
-
-		return parent::match($params);
-	}
-
-	public function getAttr() {
+	protected function getAttr() {
 		return self::$attr;
 	}
-}
 
+	protected function getId() {
+		return self::ID_COLUMN;
+	}
+
+	protected function getTable() {
+		return self::TABLE_NAME;
+	}
+
+	public static function get($params = array(), $order = '', $limit = '') {
+		return parent::get(self::TABLE_NAME, 'Pic', self::$attr, self::ID_COLUMN, $params, $order, $limit);
+	}
+	
+	public static function get_count($params = array()) {
+		return parent::get_count(self::TABLE_NAME, 'Pic', self::$attr, self::ID_COLUMN, $params);
+	}
+}
