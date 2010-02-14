@@ -14,7 +14,7 @@ include_once(APPROOT.'/lib/constants.php');
 include_once(APPROOT.'/model/link.class.php');
 
 $dbcnx = new PDO(DB_DSN);
-Model::set_dbcnx($dbcnx);
+ORM::set_dbcnx($dbcnx);
 
 $url       = rawurldecode($_REQUEST['url']);
 $nick      = rawurldecode($_REQUEST['nick']);

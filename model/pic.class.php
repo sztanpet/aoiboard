@@ -90,7 +90,7 @@ class Pic extends Model {
 	public function delete() {
 		unlink($this->path);
 
-		$dbcnx = parent::dbcnx();
+		$dbcnx = ORM::get_dbcnx();
 		$q     = 'update '.$this->table.' set deleted = 1 where id = :id';
 		$stmt  = $dbcnx->prepare($q);
 		$stmt->execute(array(':'.$this->id_column => $this->data['id']));

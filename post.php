@@ -16,7 +16,7 @@ include(APPROOT.'/lib/functions.php');
 include(APPROOT.'/model/pic.class.php');
 
 $dbcnx = new PDO(DB_DSN);
-Model::set_dbcnx($dbcnx);
+ORM::set_dbcnx($dbcnx);
 
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);

@@ -13,7 +13,7 @@ $css_files = array(
 );
 
 $dbcnx = new PDO(DB_DSN);
-Model::set_dbcnx($dbcnx);
+ORM::set_dbcnx($dbcnx);
 
 render_iterator('Pic', PAGE_LIMIT_PIC, 'html/index.html.php', $css_files);
 
