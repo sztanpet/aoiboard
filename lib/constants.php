@@ -1,5 +1,6 @@
 <?php
 mb_internal_encoding('utf-8');
+error_reporting(E_ALL);
 
 define('STORAGE_PATH'   , './pic/');
 define('TMP_PATH'       , '/tmp/');

@@ -1,165 +1,98 @@
 <?php
-include_once(APPROOT.'/model/item.class.php');
-include_once(APPROOT.'/model/itemiterator.class.php');
+include_once(APPROOT.'/model/model.class.php');
+include_once(APPROOT.'/model/orm.class.php');
+include_once(APPROOT.'/model/modeliterator.class.php');
 
-class Pic extends Item {
+class Pic extends Model {
 
-	const TABLE_NAME = 'pic';
-	const ID_COLUMN  = 'id';
+	protected $table     = 'pic';
+	protected $id_column = 'id';
 
-	protected static $attr = array(
+	protected $attr = array(
 		'id' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
 		),
 		'ctime' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
+			'default' => array('Pic', 'default_ctime'),
 		),
 		'original_url' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
 		),
 		'thumb' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
 		),
 		'nick' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
 		),
 		'path' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
 		),
 		'comment' => array(
-			'type'  => 'r', 
-			'read'  => '', 
-			'write' => '',
+			'access'  => 'r', 
+			'default' => '',
 		),
 		'checksum' => array(
-			'type'  => 'r',
-			'read'  => '',
-			'write' => '',
+			'access'  => 'r',
+			'read'    => 'get_checksum',
 		),
 		'deleted' => array(
-			'type'  => 'r',
-			'read'  => '',
-			'write' => '',
+			'access'  => 'r',
+			'default' => false,
 		),
 	);
 
-	public function __construct($params) {
-
-		parent::__construct($params);
-
-		$errors = array();
-		$params = array_map('trim', $params);
-
-		if (isset($params['id'])) {
-			$this->data['id'] = (int)$params['id'];
+	public function validate() {
+		if ($this->data['nick'] == '') {
+			$this->errors['nick'] = 'no nick given';
 		}
-		if (count(array_diff(array_keys($params), array('id'))) == 0) {
-			$this->load();
+
+		if ($this->data['original_url'] == '') {
+			$this->errors['original_url'] = 'no original_url given';
+		}
+
+		if (!$this->data['deleted']) {
+			if (isset($this->data['path'])) {
+				if (!is_file($this->data['path']) || !is_readable($this->data['path'])) {
+					$this->errors['path'] = 'no such file path: '.$this->data['path'];
+				}
+			} else {
+				$this->errors['path'] = 'no path given';
+			}
+		}
+
+		if (isset($this->data['thumb'])) {
+			if (!is_file($this->data['thumb']) || !is_readable($this->data['thumb'])) {
+				$this->errors['thumb'] = 'no such file thumb: '.$this->data['thumb'];
+			}
 		} else {
-
-			if (isset($params['nick']) && $params['nick'] !== '') {
-				$this->data['nick'] = $params['nick'];
-			} else {
-				$errors['nick'] = 'no nick given';
-			}
-
-			if (isset($params['original_url']) && $params['original_url'] !== '') {
-				$this->data['original_url'] = $params['original_url'];
-			} else {
-				$errors['original_url'] = 'no original_url given';
-			}
-
-			if (isset($params['comment'])) {
-				$this->data['comment'] = $params['comment'];
-			} else {
-				$errors['comment'] = 'no comment given';
-			}
-
-			if (isset($params['ctime']) && preg_match('/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/', $params['ctime'])) {
-				$this->data['ctime'] = $params['ctime'];
-			} else {
-				$errors['ctime'] = 'no ctime given';
-			}
-			
-			if (isset($params['deleted'])) {
-				$this->data['deleted'] = $params['deleted'] === 'N' ? false : (bool)$params['deleted'];
-			} else {
-				$this->data['deleted'] = false;
-			}
-
-			if (!$this->data['deleted']) {
-				if (isset($params['path'])) {
-					if (is_file($params['path']) && is_readable($params['path'])) {
-						$this->data['path'] = $params['path'];
-					} else {
-						$errors['path'] = 'no suck file path: '.$params['path'];
-					}
-				} else {
-					$errors['path'] = 'no path given';
-				}
-			}
-
-			if (isset($params['thumb'])) {
-				if (is_file($params['thumb']) && is_readable($params['thumb'])) {
-					$this->data['thumb'] = $params['thumb'];
-				} else {
-					$errors['thumb'] = 'no suck file: '.$params['thumb'];
-				}
-			} else {
-				$errors['thumb'] = 'no thumb given';
-			}
-
-			if (!empty($errors)) {
-				throw new Exception(var_export($errors, true));
-			}
-
-
-			if (!isset($params['checksum'])) {
-				$this->data['checksum'] = md5_file($params['path']);
-			} else {
-				$this->data['checksum'] = $params['checksum'];
-			}
+			$this->errors['thumb'] = 'no thumb given';
 		}
+		
+		if (!empty($errors)) {
+			return false;
+		}
+		return true;
+	}
+
+	protected function get_checksum() {
+		if (isset($this->data['path']) && !isset($this->data['checksum'])) {
+			 $this->data['checksum'] = md5_file($this->data['path']);
+		}
+
+		return $this->data['checksum'];
+	}
+
+	protected static function default_ctime() {
+		return date('Y-m-d H:m:s');
 	}
 
 	public function delete() {
 		unlink($this->path);
 
 		$dbcnx = parent::dbcnx();
-		$q    = 'update '.self::TABLE_NAME.' set deleted = 1 where id = :id';
-		$stmt = $dbcnx->prepare($q);
-		$stmt->execute(array(':id' => $this->data['id']));
-	}
-
-	protected function getAttr() {
-		return self::$attr;
-	}
-
-	protected function getId() {
-		return self::ID_COLUMN;
-	}
-
-	protected function getTable() {
-		return self::TABLE_NAME;
-	}
-
-	public static function get($params = array(), $order = '', $limit = '') {
-		return parent::get(self::TABLE_NAME, 'Pic', self::$attr, self::ID_COLUMN, $params, $order, $limit);
-	}
-	
-	public static function get_count($params = array()) {
-		return parent::get_count(self::TABLE_NAME, 'Pic', self::$attr, self::ID_COLUMN, $params);
+		$q     = 'update '.$this->table.' set deleted = 1 where id = :id';
+		$stmt  = $dbcnx->prepare($q);
+		$stmt->execute(array(':'.$this->id_column => $this->data['id']));
 	}
 }

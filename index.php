@@ -12,4 +12,8 @@ $css_files = array(
 	'./css/component/menu.css',
 );
 
+$dbcnx = new PDO(DB_DSN);
+Model::set_dbcnx($dbcnx);
+
 render_iterator('Pic', PAGE_LIMIT_PIC, 'html/index.html.php', $css_files);
+

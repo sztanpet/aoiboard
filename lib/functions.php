@@ -41,9 +41,9 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 	$t_ht  = $width;
 	$t_wd  = $height;
 
-	if(1 > $ratio){
+	if (1 > $ratio) {
 		$t_wd = round($o_wd * $t_wd / $o_ht);
-	}else{
+	} else {
 		$t_ht = round($o_ht * $t_ht / $o_wd);
 	}
 
@@ -64,6 +64,8 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 }
 
 function render_iterator($class, $page_limit, $template, $css_files) {
+	$params = array();
+
 	if (isset($_REQUEST['limit']) && (int)$_REQUEST['limit'] > 0) {
 		$limit = (int)$_REQUEST['limit'];
 	} else {
@@ -104,7 +106,7 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 			);
 		}
 
-		if (preg_match('/^-\d$/', $_GET['day'])) {
+		if (preg_match('/^-\d+$/', $_GET['day'])) {
 			$params['ctime'] = array(
 				'apply' => 'DATE(@@ctime@@)',
 				'value' => date('Y-m-d', strtotime($_GET['day'].' day')),
@@ -147,19 +149,19 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 		);
 	}
 
-	$maxpage = max(ceil(call_user_func(array($class, 'get_count'), ($params)) / $limit) - 1, 0);
+	$maxpage = max(ceil(ORM::count($class, $params) / $limit) - 1, 0);
 	$offset  = isset($offset) ? (int)$offset : (int)$limit * $maxpage;
 	$page    = isset($page) ? $page : (int)$maxpage;
 
-	$items   = call_user_func(array($class, 'get'), $params, '', array($offset, $limit));
+	$items   = ORM::all($class, $params, '', array($offset, $limit));
 	$items->reverse();
 
 	$urlparams = array(
 		'page'  => $page, 
 		'nick'  => $nick, 
-		'day'   => isset($params['ctime']) ? $_GET['day']  : null,
-		'week'  => isset($params['ctime']) ? $_GET['week'] : null,
-		'limit' => ($limit != $page_limit && isset($_GET['limit'])) ? $limit : null
+		'day'   => (isset($params['ctime']) && isset($_GET['day']))   ? $_GET['day']  : null,
+		'week'  => (isset($params['ctime']) && isset($_GET['week']))  ? $_GET['week'] : null,
+		'limit' => ($limit != $page_limit && isset($_GET['limit']))   ? $limit        : null
 	);
 
 	include(APPROOT.'/'.$template);

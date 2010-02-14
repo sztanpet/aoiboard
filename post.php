@@ -1,13 +1,26 @@
 <?php
 define('APPROOT', dirname(__FILE__));
 
+
+// return as fast as we can, spare the bot
+ob_end_clean();
+header("Connection: close\r\n");
+header("Content-Encoding: none\r\n");
+ob_end_flush();     
+flush();            
+
+
+
 include(APPROOT.'/lib/constants.php');
 include(APPROOT.'/lib/functions.php');
 include(APPROOT.'/model/pic.class.php');
 
+$dbcnx = new PDO(DB_DSN);
+Model::set_dbcnx($dbcnx);
+
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);
-$comment = rawurldecode($_REQUEST['comment']);
+$comment = rawurldecode(isset($_REQUEST['comment']) ? $_REQUEST['comment'] : '');
 $time    = $_SERVER['REQUEST_TIME'];
 
 $file_name  = '/'.$time.rand(0,100);
@@ -46,10 +59,13 @@ $pic = new Pic(array(
 	'path'         => $path,
 	'comment'      => $comment,
 	'thumb'        => $thumb_path,
-	'ctime'         => date('Y-m-d H:m:s', $time),
+	'ctime'        => date('Y-m-d H:m:s', $time),
 ));
-if (Pic::get(array('checksum' => $pic->checksum))->count() === 0) {
-	$pic->save();
+
+if (ORM::all('pic', array('checksum' => $pic->checksum))->count() === 0) {
+	if (!$pic->save()) {
+		var_dump($pic->errors());
+	}
 } else {
 	unlink($path);
 	unlink($thumb_path);
