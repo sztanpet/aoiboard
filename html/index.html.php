@@ -4,7 +4,7 @@
 <div id="images">
 <?php foreach ($items as $item): ?>
 	<div class="image">
-		<a class="thumb" href="<?php print preg_replace('#/+#', '/', $item->path); ?>"><img alt="" src="<?php print preg_replace('#/+#', '/', $item->thumb); ?>"/></a>
+		<a class="thumb" target="_blank" href="<?php print 'show.php?p='.$item->id; ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
 		<span class="nick"><?php print htmlspecialchars($item->nick); ?></span>
 		<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
 		<?php if (trim($item->comment) !== ''): ?>

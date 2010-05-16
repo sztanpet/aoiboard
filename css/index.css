@@ -3,6 +3,10 @@
 	margin-right:8em;
 }
 
+#bigpic  {
+	margin-right:8em;
+}
+
 #images .image {
 	display:inline-block;
 	width:220px;
@@ -11,10 +15,12 @@
 	min-height:200px;
 }
 
+#bigpic .image a:link img ,
 #images .image a:link img {
 	border:1px solid blue;
 }
 
+#bigpic .image a:visited img ,
 #images .image a:visited img {
 	border:2px solid #551A8B;
 }
@@ -23,16 +29,23 @@
 	display:block;
 }
 
+#bigpic .nick ,
 #images .image .nick {
 	font-size:0.9em;
 }
 
+#bigpic .time ,
 #images .image .time {
 	font-size:0.8em;
 }
 
+#bigpic .comment ,
 #images .image .comment {
 	color:gray;
 	font-style:italic;
 	font-size:0.8em;
+}
+
+#bigpic .image .bigpic {
+	display:block;
 }

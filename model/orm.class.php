@@ -33,7 +33,7 @@ class ORM {
 		return self::get_count($attr, $model, $table, $id_column, $params, $order);
 	}
 
-	public function first($model, $params = array(), $order = '') {
+	public static function first($model, $params = array(), $order = '') {
 		list($attr, $table, $id_column) = self::get_model_info($model);
 
 		$dbre = self::get($attr, $model, $table, $id_column, $params, $order, '1');
