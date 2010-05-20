@@ -4,8 +4,8 @@
 <div id="images">
 <?php foreach ($items as $item): ?>
 	<div class="image">
-		<a class="thumb" target="_blank" href="<?php print preg_replace('#/+#', '/', $item->path); ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
-		<span class="nick"><?php print htmlspecialchars($item->nick); ?></span>
+		<a class="thumb" href="<?php print preg_replace('#/+#', '/', $item->path); ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
+		<a href="<?php print '?'.http_build_query(array_merge($urlparams, array('nick' => $item->nick, 'page' => null))) ?>" class="nick"><?php print htmlspecialchars($item->nick); ?></span>
 		<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
 		<?php if (trim($item->comment) !== ''): ?>
 		<span class="comment"><?php print htmlspecialchars($item->comment); ?></span>

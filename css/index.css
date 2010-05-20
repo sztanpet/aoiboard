@@ -25,6 +25,7 @@
 	border:2px solid #551A8B;
 }
 
+#images .image a.nick,
 #images .image span {
 	display:block;
 }
