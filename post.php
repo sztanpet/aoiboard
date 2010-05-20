@@ -59,7 +59,7 @@ $pic = new Pic(array(
 	'path'         => $path,
 	'comment'      => $comment,
 	'thumb'        => $thumb_path,
-	'ctime'        => date('Y-m-d H:m:s', $time),
+	'ctime'        => date('Y-m-d H:i:s', $time),
 ));
 
 if (ORM::all('pic', array('checksum' => $pic->checksum))->count() === 0) {
