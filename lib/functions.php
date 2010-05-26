@@ -168,6 +168,7 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 }
 
 function curl_geturl( $url, $filename ) {
+	$fd   = fopen( $filename, 'w+');
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
 			CURLOPT_URL             => $url,
@@ -176,12 +177,13 @@ function curl_geturl( $url, $filename ) {
 			CURLOPT_RETURNTRANSFER  => false,
 			CURLOPT_FOLLOWLOCATION  => true,
 			CURLOPT_HEADER          => false,
-			CURLOPT_FILE            => $filename,
+			CURLOPT_FILE            => $fd,
 		)
 	);
 
 	$ret = curl_exec($curl);
 	curl_close($curl);
+	fclose($fd);
 
 	return $ret;
 }
