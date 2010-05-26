@@ -10,8 +10,8 @@ header("Content-Encoding: none\r\n");
 ob_end_flush();     
 flush();            
 
-
 include_once(APPROOT.'/lib/constants.php');
+include_once(APPROOT.'/lib/functions.php');
 include_once(APPROOT.'/model/link.class.php');
 
 $dbcnx = new PDO(DB_DSN);
@@ -37,4 +37,5 @@ $link = new Link(array(
 	'url'   => $url, 
 	'ctime' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
 ));
+
 $link->save();
