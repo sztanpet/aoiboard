@@ -168,7 +168,10 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 }
 
 function curl_geturl( $url, $filename ) {
-	$fd   = fopen( $filename, 'w+');
+	if (($fd = fopen( $filename, 'w+')) === false) {
+		return false;
+	}
+
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
 			CURLOPT_URL             => $url,

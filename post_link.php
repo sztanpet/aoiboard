@@ -22,7 +22,7 @@ $time      = $_SERVER['REQUEST_TIME'];
 $file_name = '/'.$time.rand(0,100);
 $tmp_path  = tempnam(TMP_PATH, 'board_link');
 
-shell_exec("wget -U 'Opera/9.60 (X11; Linux i686; U; en)' -c '".escapeshellcmd($url)."' -o /dev/null -O ".$tmp_path);
+curl_geturl($url, $tmp_path);
 
 $title = $url;
 if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($tmp_path), $match)) {
@@ -34,6 +34,6 @@ $link = new Link(array(
 	'nick'  => $nick, 
 	'title' => $title, 
 	'url'   => $url, 
-	'ctime' => date('Y-m-d H:m:s', $_SERVER['REQUEST_TIME']),
+	'ctime' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
 ));
 $link->save();

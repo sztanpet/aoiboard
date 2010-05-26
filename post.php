@@ -26,7 +26,9 @@ $time    = $_SERVER['REQUEST_TIME'];
 $file_name  = '/'.$time.rand(0,100);
 $tmp_path   = tempnam(TMP_PATH, 'board_pic');
 
-shell_exec("wget -U 'Opera/9.60 (X11; Linux i686; U; en)' -c '".escapeshellcmd($url)."' -o /dev/null -O ".$tmp_path);
+if (curl_geturl($url, $tmp_path) === false) {
+	return 'cant download '.htmlspecialchars($url);
+}
 
 $extension  = '';
 $image_info = getimagesize($tmp_path); 
