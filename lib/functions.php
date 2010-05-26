@@ -166,3 +166,27 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 
 	include(APPROOT.'/'.$template);
 }
+
+function curl_geturl( $url, $filename ) {
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+			CURLOPT_URL             => $url,
+			CURLOPT_REFERER         => $url,
+			CURLOPT_USERAGENT       => 'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/532.3 (KHTML, like Gecko) Chrome/4.0.223.11 Safari/532.3',
+			CURLOPT_RETURNTRANSFER  => true,
+			CURLOPT_FOLLOWLOCATION  => true,
+			CURLOPT_HEADER          => false,
+		)
+	);
+
+	$file = curl_exec( $curl );
+	curl_close( $curl );
+
+	if (!$file)
+		return false;
+
+	if (!file_put_contents($filename, $file))
+		return false;
+
+	return true;
+}
