@@ -1,6 +1,7 @@
 <?php
 define('APPROOT', dirname(__FILE__));
 
+ignore_user_abort(true);
 
 // return as fast as we can, spare the bot
 ob_end_clean();
