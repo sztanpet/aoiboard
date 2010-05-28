@@ -44,7 +44,7 @@ switch ($image_info['mime']) {
 		$extension = 'png';
 		break;
 	default:
-		unset($tmp_path);
+		unlink($tmp_path);
 		die('unknown image type: '.$image_info['mime']);
 }
 $path = STORAGE_PATH.$file_name.'.'.$extension;

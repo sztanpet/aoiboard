@@ -168,21 +168,35 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 }
 
 function curl_geturl( $url, $filename ) {
-	if (($fd = fopen( $filename, 'w+')) === false) {
+	if (($fd = fopen($filename, 'w')) === false) {
 		return false;
 	}
 
-	$curl = curl_init();
-	curl_setopt_array($curl, array(
-			CURLOPT_URL             => $url,
-			CURLOPT_REFERER         => $url,
-			CURLOPT_USERAGENT       => 'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/532.3 (KHTML, like Gecko) Chrome/4.0.223.11 Safari/532.3',
-			CURLOPT_RETURNTRANSFER  => false,
-			CURLOPT_FOLLOWLOCATION  => true,
-			CURLOPT_HEADER          => false,
-			CURLOPT_FILE            => $fd,
-		)
-	);
+	$parts = parse_url($url);
+
+	if (!isset($parts['scheme']) || !isset($parts['host'])) {
+		return false;
+	}
+
+	$url  = $parts['scheme'].'://';
+	$url .= isset($parts['username']) ?     $parts['username'] : '';
+	$url .= isset($parts['pass'])     ? ':'.$parts['username'] : '';
+	$url .= isset($parts['pass'])     ? '@'.$parts['host']     : $parts['host'];
+	$url .= isset($parts['path'])     ? join('/', array_map('rawurlencode', explode('/', $parts['path']))) : '';
+
+	if (isset($parts['query'])) {
+		parse_str($parts['query'], $query_parts);
+		$url .= '?'.http_build_query(array_map('rawurlencode', $query_parts));
+	}
+
+	$curl = curl_init($url);
+	curl_setopt($curl, CURLOPT_REFERER       , $url);
+	curl_setopt($curl, CURLOPT_USERAGENT     , 'Mozilla/5.0 (Windows; U; Windows NT 5.1; hu; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)');
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($curl, CURLOPT_HEADER        , false);
+	curl_setopt($curl, CURLOPT_HTTP_VERSION  , CURL_HTTP_VERSION_1_1);
+	curl_setopt($curl, CURLOPT_FILE          , $fd);
 
 	$ret = curl_exec($curl);
 	curl_close($curl);
