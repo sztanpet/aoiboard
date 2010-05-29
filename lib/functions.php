@@ -191,7 +191,6 @@ function curl_geturl( $url, $filename ) {
 	}
 
 	$curl = curl_init($url);
-	curl_setopt($curl, CURLOPT_REFERER       , $url);
 	curl_setopt($curl, CURLOPT_USERAGENT     , 'Mozilla/5.0 (Windows; U; Windows NT 5.1; hu; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)');
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
 	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
