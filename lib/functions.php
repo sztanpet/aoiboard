@@ -178,11 +178,12 @@ function curl_geturl( $url, $filename ) {
 		return false;
 	}
 
+
 	$url  = $parts['scheme'].'://';
-	$url .= isset($parts['username']) ?     $parts['username'] : '';
-	$url .= isset($parts['pass'])     ? ':'.$parts['username'] : '';
-	$url .= isset($parts['pass'])     ? '@'.$parts['host']     : $parts['host'];
-	$url .= isset($parts['path'])     ? join('/', array_map('rawurlencode', explode('/', $parts['path']))) : '';
+	$url .= isset($parts['user']) ?     $parts['user'] : '';
+	$url .= isset($parts['pass']) ? ':'.$parts['pass'] : '';
+	$url .= isset($parts['pass']) || isset($parts['user']) ? '@'.$parts['host'] : $parts['host'];
+	$url .= isset($parts['path']) ? join('/', array_map('rawurlencode', explode('/', $parts['path']))) : '';
 
 	if (isset($parts['query'])) {
 		parse_str($parts['query'], $query_parts);
