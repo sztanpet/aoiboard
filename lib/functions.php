@@ -157,8 +157,8 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 	$items->reverse();
 
 	$urlparams = array(
-		'page'  => $page, 
-		'nick'  => $nick, 
+		'page'  => $page,
+		'nick'  => $nick,
 		'day'   => (isset($params['ctime']) && isset($_GET['day']))   ? $_GET['day']  : null,
 		'week'  => (isset($params['ctime']) && isset($_GET['week']))  ? $_GET['week'] : null,
 		'limit' => ($limit != $page_limit && isset($_GET['limit']))   ? $limit        : null
@@ -167,7 +167,7 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 	include(APPROOT.'/'.$template);
 }
 
-function curl_geturl( $url, $filename ) {
+function curl_geturl($url, $filename) {
 	if (($fd = fopen($filename, 'w')) === false) {
 		return false;
 	}
@@ -191,7 +191,6 @@ function curl_geturl( $url, $filename ) {
 	}
 
 	$curl = curl_init($url);
-	curl_setopt($curl, CURLOPT_USERAGENT     , 'Mozilla/5.0 (Windows; U; Windows NT 5.1; hu; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)');
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
 	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($curl, CURLOPT_HEADER        , false);
