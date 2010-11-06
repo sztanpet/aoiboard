@@ -1,0 +1,37 @@
+<IfModule mod_mime.c>
+	AddType text/css        .css
+	AddType text/javascript .js
+	AddType image/jpeg      .jpg
+	AddType image/gif       .gif
+	AddType image/png       .png
+</IfModule>
+
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType text/css   "access plus 1 year"
+	ExpiresByType text/js    "access plus 1 year"
+	ExpiresByType image/jpeg "access plus 1 year"
+	ExpiresByType image/gif  "access plus 1 year"
+	ExpiresByType image/png  "access plus 1 year"
+</IfModule>
+
+<files *.gif>
+	header unset etag
+	fileetag none
+</files>
+<files *.gif>
+	header unset etag
+	fileetag none
+</files>
+<files *.png>
+	header unset etag
+	fileetag none
+</files>
+<files *.jpg>
+	header unset etag
+	fileetag none
+</files>

@@ -10,26 +10,26 @@ class Pic extends Model {
 
 	protected $attr = array(
 		'id' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 		),
 		'ctime' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 			'default' => array('Pic', 'default_ctime'),
 		),
 		'original_url' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 		),
 		'thumb' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 		),
 		'nick' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 		),
 		'path' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 		),
 		'comment' => array(
-			'access'  => 'r', 
+			'access'  => 'r',
 			'default' => '',
 		),
 		'checksum' => array(
@@ -68,7 +68,7 @@ class Pic extends Model {
 		} else {
 			$this->errors['thumb'] = 'no thumb given';
 		}
-		
+
 		if (!empty($errors)) {
 			return false;
 		}
@@ -94,5 +94,9 @@ class Pic extends Model {
 		$q     = 'update '.$this->table.' set deleted = 1 where id = :id';
 		$stmt  = $dbcnx->prepare($q);
 		$stmt->execute(array(':'.$this->id_column => $this->data['id']));
+	}
+
+	public function html_thumb() {
+		return $this->thumb.'?'.filemtime(APPROOT.'/'.trim($this->thumb, './'));
 	}
 }
