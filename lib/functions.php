@@ -164,13 +164,6 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 		'limit' => ($limit != $page_limit   && isset($_GET['limit'])) ? $limit        : null
 	);
 
-	// only the last page changes, so if we'r not on that one, make it cacheable
-	if ($page != $maxpage) {
-		// 31536000 == 1 year
-		header('Cache-Control: max-age=31536000');
-		header('Expires: '.date('r', $_SERVER['REQUEST_TIME'] + 31536000));
-	}
-
 	include(APPROOT.'/'.$template);
 }
 
