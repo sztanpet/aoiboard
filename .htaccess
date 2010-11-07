@@ -19,7 +19,7 @@
 	ExpiresByType image/png  "access plus 1 year"
 </IfModule>
 
-<files *.gif>
+<files *.css>
 	header unset etag
 	fileetag none
 </files>
