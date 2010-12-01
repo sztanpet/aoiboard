@@ -41,22 +41,22 @@ class ORM {
 		return $dbre->current();
 	}
 
-	
+
 	public static function set_dbcnx($dbcnx) {
 		self::$dbcnx = $dbcnx;
 	}
-	
-	public static function get_dbcxn() {
+
+	public static function get_dbcnx() {
 		return self::$dbcnx;
 	}
 
 
 	private static function get($attr, $table, $class, $id_column, $params, $order = '', $limit = '') {
-		$q_params = array(); 
+		$q_params = array();
 		$q = 'select '.join(',', array_keys($attr)).' from '.$table;
-		
+
 		list($where, $q_params) = self::build_where($attr, $id_column, $params);
-		
+
 		if ($where != '') {
 			$q .= ' where '.$where;
 		}
@@ -85,17 +85,17 @@ class ORM {
 
 	public static function get_count($attr, $table, $class, $id_column, $params) {
 		$data      = array();
- 
-		$q_params = array(); 
+
+		$q_params = array();
 		$q = 'select count('.$id_column.') count from '.$table;
- 
+
 		if (!empty($params)) {
 			list($where, $q_params) = self::build_where($attr, $id_column, $params);
 			if ($where != '') {
 				$q .= ' where '.$where;
 			}
 		}
-		
+
 		$stmt = self::$dbcnx->prepare($q);
 		$stmt->execute($q_params);
 		return reset(array_values($stmt->fetch(PDO::FETCH_ASSOC)));
@@ -129,9 +129,9 @@ class ORM {
 							$i = 0;
 							$part .= '(';
 							foreach ($params[$attr]['value'] as $value) {
-								$part .= ':'.$attr.'_'.$i.',';	
+								$part .= ':'.$attr.'_'.$i.',';
 								$q_params[':'.$attr.'_'.$i] = $value;
-								++$i;	
+								++$i;
 							}
 							$part = substr($part, 0, -1).')';
 						} else {
@@ -142,7 +142,7 @@ class ORM {
 						$q_params[':'.$attr] = $params[$attr]['value'];
 					}
 
-					$where_parts[] = $part;					
+					$where_parts[] = $part;
 				} else {
 					$where_parts[] = $attr.' = :'.$attr;
 					$q_params[':'.$attr] = $params[$attr];

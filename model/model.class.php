@@ -43,7 +43,7 @@ abstract class Model {
 	 */
 
 	public function delete() {
-		$dbcnx = ORM::get_dbcxn();
+		$dbcnx = ORM::get_dbcnx();
 		$q     = 'delete from '.$this->table.' where '.$this->id_column.' = :id';
 		$stmt  = $dbcnx->prepare($q);
 		$stmt->execute(array(':'.$this->id_column => $this->data[$this->id_column]));
@@ -54,7 +54,7 @@ abstract class Model {
 			return false;
 		}
 
-		$dbcnx = ORM::get_dbcxn();
+		$dbcnx = ORM::get_dbcnx();
 		$columns = array_diff(array_keys($this->attr), array($this->id_column));
 		foreach ($columns as $col) {
 			$values[':'.$col] = $this->data[$col];

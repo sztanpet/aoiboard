@@ -203,3 +203,28 @@ function curl_geturl($url, $filename) {
 
 	return $ret;
 }
+
+function gc_pics() {
+	$not_deleted_pics = ORM::all('pic', array('deleted' => '0'), array('ctime', 'asc'), array('0', '3000'));
+	// glob() is disabled on some host :-(
+	// just give up on open_basedir already and choort the php process damint (fpm is my hero)
+	$files = array_diff(scandir(realpath(STORAGE_PATH)), array('.', '..'));
+	foreach ($files as $f) {
+		$sum_size += (int)(filesize(realpath(STORAGE_PATH).'/'.$f) / 1024);
+	}
+	$bytes_to_free      = $sum_size - STORAGE_LIMIT;
+	$bytes_freed_so_far = 0;
+
+	if ($bytes_to_free < 0) {
+		return;
+	}
+
+	foreach ($not_deleted_pics as $i => $pic) {
+		if ($bytes_freed_so_far >= $bytes_to_free) {
+			break;
+		}
+		$bytes_freed_so_far += filesize(realpath($pic->path));
+		$pic->delete();
+	}
+	return $bytes_freed_so_far;
+}
