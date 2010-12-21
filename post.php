@@ -1,6 +1,5 @@
 <?php
 define('APPROOT', dirname(__FILE__));
-
 ignore_user_abort(true);
 
 // return as fast as we can, spare the bot
@@ -19,12 +18,12 @@ ORM::set_dbcnx($dbcnx);
 
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);
-$comment = rawurldecode(isset($_REQUEST['comment']) ? $_REQUEST['comment'] : '');
+$comment = rawurldecode(isset($_REQUEST['comment']) ? trim($_REQUEST['comment']) : '');
 
-$tmp_path   = tempnam(TMP_PATH, 'board_pic');
+$tmp_path = tempnam(TMP_PATH, 'board_pic');
 
 if (curl_geturl($url, $tmp_path) === false) {
-	return 'cant download '.htmlspecialchars($url);
+	error_log('cant download '.htmlspecialchars($url));
 }
 
 $extension  = '';
@@ -41,9 +40,25 @@ switch ($image_info['mime']) {
 		break;
 	default:
 		save_link($url, $nick, $tmp_path);
+		if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
+			curl_geturl('http://netslum.ath.cx/board/post.php?'.http_build_query(array(
+				'url' => $url,
+				'nick' => $nick,
+			)), '/dev/null');
+			exit;
+		}
 		break;
 }
 save_pic($url, $nick, $comment, $tmp_path, $extension);
+if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
+	curl_geturl('http://netslum.ath.cx/board/post.php?'.http_build_query(array(
+		'url' => $url,
+		'nick' => $nick,
+		'comment' => $comment,
+	)), '/dev/null');
+}
+gc_pics();
+build_rss_files();
 
 function save_pic($url, $nick, $comment, $saved_file, $ext){
 	$file_name  = '/'.$_SERVER['REQUEST_TIME'].rand(0,100);

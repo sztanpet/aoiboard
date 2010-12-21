@@ -11,5 +11,10 @@
 		<link rel="stylesheet" type="text/css" href="<?php print htmlspecialchars($file).'?'.filemtime(APPROOT.'/'.trim($file, './')); ?>" />
 		<?php endforeach; ?>
 	<?php endif; ?>
+	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.PIC_THUMB_RSS_FILE?>"      title="#aoianime picture feed">
+	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.PIC_FULL_RSS_FILE?>"       title="#aoianime picture feed (full size)">
+	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.LINK_RSS_FILE?>"           title="#aoianime link feed">
+	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.COMBINED_THUMB_RSS_FILE?>" title="#application combined feed">
+	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.COMBINED_FULL_RSS_FILE?>"  title="#application combined feed (full size)">
 </head>
 <body>

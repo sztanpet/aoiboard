@@ -211,6 +211,7 @@ function gc_pics() {
 	$files = array_diff(scandir(realpath(STORAGE_PATH)), array('.', '..'));
 	foreach ($files as $f) {
 		$sum_size += (int)(filesize(realpath(STORAGE_PATH).'/'.$f) / 1024);
+		var_dump($sum_size);
 	}
 	$bytes_to_free      = $sum_size - STORAGE_LIMIT;
 	$bytes_freed_so_far = 0;
@@ -219,12 +220,85 @@ function gc_pics() {
 		return;
 	}
 
+	file_put_contents(GC_LOG_FILE, '['.date('Y-m-d H:i:s').'] '.$bytes_to_free."kb to free\n", FILE_APPEND);
+
 	foreach ($not_deleted_pics as $i => $pic) {
 		if ($bytes_freed_so_far >= $bytes_to_free) {
 			break;
 		}
 		$bytes_freed_so_far += filesize(realpath($pic->path));
+		file_put_contents(GC_LOG_FILE, '['.date('Y-m-d H:i:s').'] deleting: ('.$pic->id.') size: '.((int)filesize(realpath($pic->path) / 1024))."kb\n", FILE_APPEND);
 		$pic->delete();
 	}
+	file_put_contents(GC_LOG_FILE, "\n", FILE_APPEND);
 	return $bytes_freed_so_far;
+}
+
+function base_url() {
+	return 'http://'.str_replace('\\', '/', $_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']));
+}
+
+function build_rss_files(){
+	include dirname(__FILE__).'/rss_builder.class.php';
+
+	$pics  = ORM::all('pic', array('deleted' => ''), array('id', 'desc'), array('0', '100'))->to_a();
+	$links = ORM::all('link', array(), array('id', 'desc'), array(0, 100))->to_a();
+	$combined = array_merge($pics, $links);
+	usort($pics,     'cmp_model_by_ctime');
+	usort($links,    'cmp_model_by_ctime');
+	usort($combined, 'cmp_model_by_ctime');
+
+
+	$rss_pic_thumbs = new RssBuilder(array(
+		'title' => '#aoianime pictures',
+		'link'  => base_url().RSS_PATH.'/'.PIC_THUMB_RSS_FILE,
+	));
+	$rss_pic_full = new RssBuilder(array(
+		'title' => '#aoianime pictures (full size)',
+		'link'  => base_url().RSS_PATH.'/'.PIC_FULL_RSS_FILE,
+	));
+	foreach ($pics as $pic) {
+		$rss_pic_thumbs->add_item($pic->to_rss('thumb'));
+		$rss_pic_full->add_item($pic->to_rss('full'));
+	}
+	$rss_pic_thumbs->build(RSS_PATH.PIC_THUMB_RSS_FILE);
+	$rss_pic_full->build(RSS_PATH.PIC_FULL_RSS_FILE);
+
+
+
+	$rss_links = new RssBuilder(array(
+		'title' => '#aoianime links',
+		'link'  => base_url().RSS_PATH.'/'.LINK_RSS_FILE,
+	));
+	foreach ($links as $link) {
+		$rss_links->add_item($link->to_rss('full'));
+	}
+	$rss_links->build(RSS_PATH.LINK_RSS_FILE);
+
+
+	$rss_combined_thumb = new RssBuilder(array(
+		'title' => '#aoianime combined',
+		'link'  => base_url().RSS_PATH.'/'.COMBINED_THUMB_RSS_FILE,
+	));
+	$rss_combined_full = new RssBuilder(array(
+		'title' => '#aoianime combined (full size)',
+		'link'  => base_url().RSS_PATH.'/'.COMBINED_FULL_RSS_FILE,
+	));
+	foreach ($combined as $item) {
+		if ($item instanceof Pic) {
+			$rss_combined_thumb->add_item($item->to_rss('thumb'));
+			$rss_combined_full->add_item($item->to_rss('full'));
+		} else {
+			$rss_combined_thumb->add_item($item->to_rss());
+			$rss_combined_full->add_item($item->to_rss());
+		}
+	}
+	$rss_combined_thumb->build(RSS_PATH.COMBINED_THUMB_RSS_FILE);
+	$rss_combined_full->build(RSS_PATH.COMBINED_FULL_RSS_FILE);
+}
+
+function cmp_model_by_ctime($lhs, $rhs){
+	$l = strtotime($lhs->ctime);
+	$r = strtotime($rhs->ctime);
+	return $r - $l;
 }

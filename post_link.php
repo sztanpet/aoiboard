@@ -1,14 +1,17 @@
 <?php
 define('APPROOT', dirname(__FILE__));
 
+
 ignore_user_abort(true);
+
 
 // return as fast as we can, spare the bot
 ob_end_clean();
 header("Connection: close\r\n");
 header("Content-Encoding: none\r\n");
-ob_end_flush();     
-flush();            
+ob_end_flush();
+flush();
+
 
 include_once(APPROOT.'/lib/constants.php');
 include_once(APPROOT.'/lib/functions.php');
@@ -32,10 +35,11 @@ if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($tmp_path)
 unlink($tmp_path);
 
 $link = new Link(array(
-	'nick'  => $nick, 
-	'title' => $title, 
-	'url'   => $url, 
+	'nick'  => $nick,
+	'title' => $title,
+	'url'   => $url,
 	'ctime' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
 ));
 
 $link->save();
+build_rss_files();

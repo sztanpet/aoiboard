@@ -37,7 +37,7 @@ class Pic extends Model {
 			'read'    => 'get_checksum',
 		),
 		'deleted' => array(
-			'access'  => 'r',
+			'access'  => 'rw',
 			'default' => false,
 		),
 	);
@@ -74,6 +74,22 @@ class Pic extends Model {
 		}
 		return true;
 	}
+
+	public function to_rss($pic_size = 'thumb') {
+		return array(
+			'title' => $this->original_url,
+			'description' =>'
+				<a href="'.base_url().'/'.trim($this->path, './').'"><img src="'.base_url().'/'.trim(($pic_size == 'thumb') ? $this->thumb : $this->path, './').'"></a><br>
+				<div>'.
+				$this->nick.' posted @ '.$this->ctime.'</div><br>'.
+				(trim($this->comment) ? '<div class="comment">comment: '.$this->comment.'</div><br>' : '').'
+				',
+			'link' => base_url().'/show.php?id='.$this->id,
+			'guid' => $this->checksum,
+			'pubDate' => $this->ctime,
+		);
+	}
+
 
 	protected function get_checksum() {
 		if (isset($this->data['path']) && !isset($this->data['checksum'])) {

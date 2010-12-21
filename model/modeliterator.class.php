@@ -8,7 +8,7 @@ class ModelIterator implements Iterator {
 	private $count;
 
 	public function __construct($data, $class) {
-		$this->data  = $data;	
+		$this->data  = $data;
 		$this->count = count($data);
 		if (!class_exists($class)) {
 			throw Exception('invalid class given: '.$class);
@@ -47,7 +47,7 @@ class ModelIterator implements Iterator {
 	public function count() {
 		return $this->count;
 	}
-	
+
 	public function reverse() {
 		$this->data = array_reverse($this->data);
 	}
@@ -67,6 +67,10 @@ class ModelIterator implements Iterator {
 	}
 
 	public function to_a() {
-		return $this->data;
+		$re = array();
+		foreach ($this->data as $d) {
+			$re[] = new $this->class($d);
+		}
+		return $re;
 	}
 }
