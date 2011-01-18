@@ -22,13 +22,13 @@ if ($end > $maxpage) {
 
 <div class="pager">
 	<?php if ($maxpage > 0): ?>
-	
+
 		<?php if ($urlparams['page'] == 0): ?>
 			<span class="left">&laquo;</span>
 		<?php else: ?>
 			<a class="left" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
 		<?php endif; ?>
-	
+
 		<?php if ($urlparams['page'] == $maxpage): ?>
 			<span class="right">&raquo;</span>
 		<?php else: ?>
@@ -41,14 +41,14 @@ if ($end > $maxpage) {
 
 		<?php for ($i = $start; $i <= $end; ++$i): ?>
 			<?php if ($i != $page): ?>
-				<a class="page" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i + 1; ?></a>
+				<a class="page" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
 			<?php else: ?>
-				<span class="page"><?php print $i + 1; ?></span>
+				<span class="page"><?php print $i; ?></span>
 			<?php endif; ?>
 		<?php endfor; ?>
 		<?php if ($right_dots): ?>
 			<span class="dots">...</span>
 		<?php endif; ?>
-	
+
 <?php endif; ?>
 </div>

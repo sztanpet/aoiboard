@@ -16,4 +16,3 @@ $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
 
 render_iterator('Pic', PAGE_LIMIT_PIC, 'html/index.html.php', $css_files);
-

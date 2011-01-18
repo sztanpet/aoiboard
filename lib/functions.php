@@ -172,23 +172,7 @@ function curl_geturl($url, $filename) {
 		return false;
 	}
 
-	$parts = parse_url($url);
-
-	if (!isset($parts['scheme']) || !isset($parts['host'])) {
-		return false;
-	}
-
-
-	$url  = $parts['scheme'].'://';
-	$url .= isset($parts['user']) ?     $parts['user'] : '';
-	$url .= isset($parts['pass']) ? ':'.$parts['pass'] : '';
-	$url .= isset($parts['pass']) || isset($parts['user']) ? '@'.$parts['host'] : $parts['host'];
-	$url .= isset($parts['path']) ? join('/', array_map('rawurlencode', explode('/', $parts['path']))) : '';
-
-	if (isset($parts['query'])) {
-		parse_str($parts['query'], $query_parts);
-		$url .= '?'.http_build_query(array_map('rawurlencode', $query_parts));
-	}
+	$url = rebuild_url($url);
 
 	$curl = curl_init($url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
@@ -204,14 +188,50 @@ function curl_geturl($url, $filename) {
 	return $ret;
 }
 
+function curl_head($url) {
+	$url = rebuild_url($url);
+
+	$curl = curl_init($url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($curl, CURLOPT_HEADER        , true);
+	curl_setopt($curl, CURLOPT_NOBODY        , true);
+	curl_setopt($curl, CURLOPT_HTTP_VERSION  , CURL_HTTP_VERSION_1_1);
+
+	$ret = curl_exec($curl);
+	curl_close($curl);
+
+	return $ret;
+}
+
+function rebuild_url($url) {
+	$parts = parse_url($url);
+
+	if (!isset($parts['scheme']) || !isset($parts['host'])) {
+		return false;
+	}
+
+	$url  = $parts['scheme'].'://';
+	$url .= isset($parts['user']) ?     $parts['user'] : '';
+	$url .= isset($parts['pass']) ? ':'.$parts['pass'] : '';
+	$url .= isset($parts['pass']) || isset($parts['user']) ? '@'.$parts['host'] : $parts['host'];
+	$url .= isset($parts['path']) ? join('/', array_map('rawurlencode', explode('/', $parts['path']))) : '';
+
+	if (isset($parts['query'])) {
+		parse_str($parts['query'], $query_parts);
+		$url .= '?'.http_build_query(array_map('rawurlencode', $query_parts));
+	}
+	return $url;
+}
+
 function gc_pics() {
 	$not_deleted_pics = ORM::all('pic', array('deleted' => '0'), array('ctime', 'asc'), array('0', '3000'));
 	// glob() is disabled on some host :-(
 	// just give up on open_basedir already and choort the php process damint (fpm is my hero)
 	$files = array_diff(scandir(realpath(STORAGE_PATH)), array('.', '..'));
+	$sum_size = 0;
 	foreach ($files as $f) {
 		$sum_size += (int)(filesize(realpath(STORAGE_PATH).'/'.$f) / 1024);
-		var_dump($sum_size);
 	}
 	$bytes_to_free      = $sum_size - STORAGE_LIMIT;
 	$bytes_freed_so_far = 0;

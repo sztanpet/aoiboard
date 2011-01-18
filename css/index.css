@@ -1,6 +1,5 @@
 #images {
-	margin-left:5em;
-	margin-right:8em;
+	margin-left:3.8em;
 }
 
 #bigpic  {
@@ -9,7 +8,7 @@
 
 #images .image {
 	display:inline-block;
-	width:220px;
+	width:210px;
 	margin:1em 0em;
 	text-align:center;
 	min-height:200px;

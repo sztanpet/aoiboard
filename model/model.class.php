@@ -8,7 +8,7 @@ abstract class Model {
 	protected $table        = '';
 	protected $attr         = array();
 	protected $errors       = array();
-	
+
 	public abstract function validate();
 
 	public function is_valid() {
@@ -30,11 +30,11 @@ abstract class Model {
 	public function get_attr() {
 		return $this->attr;
 	}
-	
+
 	public function get_table() {
 		return $this->table;
 	}
-	
+
 	public function get_id_column() {
 		return $this->id_column;
 	}
@@ -59,7 +59,7 @@ abstract class Model {
 		foreach ($columns as $col) {
 			$values[':'.$col] = $this->data[$col];
 		}
-		
+
 		if ($this->data[$this->id_column] === null) {
 			$q = 'insert into '.$this->table.' ('.join(', ', $columns).') VALUES ('.join(', ', array_keys($values)).')';
 		} else {
@@ -107,7 +107,7 @@ abstract class Model {
 			throw new Exception('no such attr: '.$name);
 		}
 	}
-	
+
 	public function __get($name) {
 		if (isset($this->attr[$name])) {
 			if ($this->attr[$name]['access'] === 'r' || $this->attr[$name]['access'] === 'rw'){
