@@ -1,6 +1,9 @@
 <?php
 
 class ORM {
+
+	public static $debug = false;
+
 	private static $models = array();
 	private static $dbcnx  = null;
 
@@ -77,6 +80,9 @@ class ORM {
 			}
 		}
 
+		if (self::$debug) {
+			var_dump($q, $q_params);
+		}
 		$stmt = self::$dbcnx->prepare($q);
 		$stmt->execute($q_params);
 

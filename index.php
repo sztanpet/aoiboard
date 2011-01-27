@@ -5,14 +5,20 @@ include_once(APPROOT.'/lib/constants.php');
 include_once(APPROOT.'/model/pic.class.php');
 include_once(APPROOT.'/lib/functions.php');
 
-$css_files = array(
-	'./css/base.css',
-	'./css/index.css',
-	'./css/component/pager.css',
-	'./css/component/menu.css',
-);
-
 $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
 
-render_iterator('Pic', PAGE_LIMIT_PIC, 'html/index.html.php', $css_files);
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQUESTED_WITH'], 'XMLHttpRequest') === 0) {
+	$css_files = array();
+	$template = 'html/pager.html.php';
+} else {
+	$css_files = array(
+		'./css/base.css',
+		'./css/index.css',
+		'./css/component/pager.css',
+		'./css/component/menu.css',
+	);
+	$template = 'html/index.html.php';
+}
+
+render_iterator('Pic', PAGE_LIMIT_PIC, $template, $css_files);

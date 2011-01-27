@@ -1,31 +1,12 @@
 <?php include(APPROOT.'/html/header.html.php'); ?>
-<?php include(APPROOT.'/html/component/menu.html.php'); ?>
-<?php include(APPROOT.'/html/component/pager.html.php'); ?>
-<div id="images">
+<div id="top">
+	<?php include(APPROOT.'/html/component/menu.html.php'); ?>
+	<iframe data-source="<?php print base_url().'/pager.php' ?>" class="pager" frameborder="0" src="<?php print base_url().'/pager.php?'.http_build_query($urlparams)?>"></iframe>
+</div>
+<?php $query_params = array_filter(array_merge($urlparams, array('page' => null)), 'strlen')?>
+<div id="images" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' data-page="<?php print $page ?>" data-source="index.php">
 <?php foreach ($items as $item): ?>
-	<div class="image">
-
-		<?php if (!$item->deleted): ?>
-			<a class="thumb" href="<?php print preg_replace('#/+#', '/', $item->path); ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
-		<?php else: ?>
-			<a class="thumb" href="<?php print $item->original_url; ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
-		<?php endif; ?>
-
-		<a href="<?php print '?'.http_build_query(array_merge($urlparams, array('nick' => $item->nick, 'page' => null))) ?>" class="nick"><?php print htmlspecialchars($item->nick); ?></a>
-
-		<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
-
-		<?php if (trim($item->comment) !== ''): ?>
-			<span class="comment"><?php print htmlspecialchars($item->comment); ?></span>
-		<?php endif; ?>
-
-		<a class="orig_url" href="<?php print htmlspecialchars($item->original_url); ?>">original link</a> |
-
-		<?php if (!$item->deleted): ?>
-			<a class="pic_url" href="<?php print 'show.php?p='.$item->id; ?>">show</a>
-		<?php endif; ?>
-
-	</div>
+<?php include(APPROOT.'/html/component/image.html.php'); ?>
 <?php endforeach; ?>
 </div>
 <?php include(APPROOT.'/html/footer.html.php'); ?>

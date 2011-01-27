@@ -1,7 +1,10 @@
 .pager {
 	text-align:center;
 	font-weight:bold;
-	margin:0em 10em;
+	width:100%;
+	position:absolute;
+	top:0;
+	left:0;
 }
 .pager .left,
 .pager .right,
@@ -53,4 +56,8 @@
 .pager a.right {
 	left:2.55em;
 	top:0.42em;
+}
+
+.pager .page {
+	margin-top:6px;
 }

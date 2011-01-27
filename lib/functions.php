@@ -63,11 +63,13 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 	return true;
 }
 
-function render_iterator($class, $page_limit, $template, $css_files) {
+function build_iterator_where($page_limit = array()) {
 	$params = array();
+	$offset = null;
+	$page   = null;
 
-	if (isset($_REQUEST['limit']) && (int)$_REQUEST['limit'] > 0) {
-		$limit = (int)$_REQUEST['limit'];
+	if (isset($_GET['limit']) && (int)$_GET['limit'] > 0) {
+		$limit = (int)$_GET['limit'];
 	} else {
 		$limit = $page_limit;
 	}
@@ -79,9 +81,13 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 
 	if (isset($_GET['nick']) && trim($_GET['nick']) !== '') {
 		$params['nick'] = rawurldecode($_GET['nick']);
-		$nick = $params['nick'];
-	} else {
-		$nick = null;
+	}
+
+	if (isset($_GET['from']) && (int)$_GET['from'] > 0) {
+		$params['id'] = array(
+			'cmp'   => '<',
+			'value' => $_GET['from'],
+		);
 	}
 
 	if (isset($_GET['day'])) {
@@ -149,16 +155,23 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 		);
 	}
 
-	$maxpage = max(ceil(ORM::count($class, $params) / $limit) - 1, 0);
-	$offset  = isset($offset) ? (int)$offset : (int)$limit * $maxpage;
-	$page    = isset($page) ? $page : (int)$maxpage;
+	return array($params, $limit, $offset, $page);
+}
 
-	$items   = ORM::all($class, $params, '', array($offset, $limit));
+function render_iterator($class, $page_limit, $template, $css_files) {
+
+	list($params, $limit, $offset, $page) = build_iterator_where($page_limit);
+
+	$maxpage = max(ceil(ORM::count($class, $params) / $limit) - 1, 0);
+	$offset  = $offset !== null ? (int)$offset : (int)$limit * $maxpage;
+	$page    = $page !== null ? $page : (int)$maxpage;
+
+	$items   = ORM::all($class, $params, array('ctime', 'asc'), array($offset, $limit));
 	$items->reverse();
 
 	$urlparams = array(
 		'page'  => $page,
-		'nick'  => $nick,
+		'nick'  => isset($params['nick']) && $params['nick'] !== null ? rawurlencode($params['nick']) : null,
 		'day'   => (isset($params['ctime']) && isset($_GET['day']))   ? $_GET['day']  : null,
 		'week'  => (isset($params['ctime']) && isset($_GET['week']))  ? $_GET['week'] : null,
 		'limit' => ($limit != $page_limit   && isset($_GET['limit'])) ? $limit        : null

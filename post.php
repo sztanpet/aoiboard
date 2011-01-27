@@ -63,7 +63,10 @@ switch ($image_info['mime']) {
 		break;
 }
 save_pic($url, $nick, $comment, $tmp_path, $extension);
-gc_pics();
+
+if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
+	gc_pics();
+}
 build_rss_files();
 
 function save_pic($url, $nick, $comment, $saved_file, $ext){
