@@ -2,6 +2,7 @@
 define('APPROOT', dirname(__FILE__));
 
 include(APPROOT.'/lib/constants.php');
+include(APPROOT.'/lib/functions.php');
 include(APPROOT.'/model/pic.class.php');
 
 $dbcnx = new PDO(DB_DSN);

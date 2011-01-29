@@ -17,8 +17,13 @@
 	ExpiresByType image/jpeg "access plus 1 year"
 	ExpiresByType image/gif  "access plus 1 year"
 	ExpiresByType image/png  "access plus 1 year"
+	ExpiresByType image/png  "access plus 1 year"
 </IfModule>
 
+<files *.js>
+	header unset etag
+	fileetag none
+</files>
 <files *.css>
 	header unset etag
 	fileetag none
