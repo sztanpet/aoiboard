@@ -1,4 +1,4 @@
-pageScroller = (function($){
+AUTOFILLER = (function($){
 	return function(opts){
 		
 		var limit,
@@ -20,7 +20,9 @@ pageScroller = (function($){
 			pages_loaded_so_far = 0,
 			re = {
 				on_page_load:null,
-				on_bottom:null
+				on_bottom:null,
+				query: query,
+				current_page:null
 			};
 
 		function refresh_last_loaded_page(root){
@@ -91,40 +93,50 @@ pageScroller = (function($){
 			}
 
 			page_load_ajax_running = true;
-			$.get(source, get_params, function(resp){
-				items.append(resp);
-				refresh_last_loaded_page(items);
-				decorate_with_days(items.find('.page_start:last'));
-				page_load_ajax_running = false;
-				pages_loaded_so_far += 1;
-				if (pages_loaded_so_far === +opts.max_loaded_pages) {
-					window.clearInterval(page_loader_interval);
-					items.parent().append('<a class="more_content" href="?'+$.param($.extend({page: +last_loaded_page - 1}, query))+'">Load more pages</a>');
-				}
-			}); 
+			$.ajax({
+				url: source, 
+				data: get_params,
+				success: function(resp){
+					items.append(resp);
+					refresh_last_loaded_page(items);
+					decorate_with_days(items.find('.page_start:last'));
+					page_load_ajax_running = false;
+					pages_loaded_so_far += 1;
+					if (pages_loaded_so_far === +opts.max_loaded_pages) {
+						window.clearInterval(page_loader_interval);
+						items.parent().append('<a class="more_content" href="?'+$.param($.extend({page: +last_loaded_page - 1}, query))+'">Load more pages</a>');
+					}
+				},
+				timeout:5000,
+				error: function() {
+					page_load_ajax_running = false;		
+				}}
+			);
 		}
+			
+		function what_page_are_we_on(){
+			var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item+':first')),
+				scroll_top = win.scrollTop() - (+start_items.eq(0).find('.border').height()),
+				current_item,
+				i, n_items = start_items.size(),
+				distances = [];
+
+			for (i = 0; i < n_items; ++i) {
+				current_item = start_items.eq(i);
+				distances.push({
+					distance: Math.abs(scroll_top - +current_item.offset().top),
+					page: current_item.attr('data-page')
+				});
+			}
+			distances.sort(function(lhs, rhs){
+				 return lhs.distance - rhs.distance;
+			});
+			re.current_page = distances[0].page;
+			return distances[0].page;
+		}
+			
 
 		function refresh_pager(){
-			function what_page_are_we_on(){
-				var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item+':first')),
-					scroll_top = win.scrollTop() - (+start_items.eq(0).find('.border').height()),
-					current_item,
-					i, n_items = start_items.size(),
-					distances = [];
-
-				for (i = 0; i < n_items; ++i) {
-					current_item = start_items.eq(i);
-					distances.push({
-						distance: Math.abs(scroll_top - +current_item.offset().top),
-						page: current_item.attr('data-page')
-					});
-				}
-				distances.sort(function(lhs, rhs){
-					 return lhs.distance - rhs.distance;
-				});
-				return distances[0].page;
-			}
-			
 			var page = what_page_are_we_on();
 			if (last_loaded_page === undefined) {
 				last_loaded_page = page;
@@ -136,7 +148,7 @@ pageScroller = (function($){
 			}
 		}
 
-		// init the scroller
+		// init the filler
 		win = $(window);
 		pager = $(opts.pager);
 		pager_source = pager.attr('data-source');
@@ -147,6 +159,7 @@ pageScroller = (function($){
 		viewport_height = win.height();
 		scroll_threshold = opts.scroll_threshold;
 		refresh_last_loaded_page(items);
+		re.current_page = items.attr('data-page');
 
 		page_loader_interval = window.setInterval(check_position, opts.check_interval || 1000);
 		pager_refresh_interval = window.setInterval(refresh_pager, opts.check_interval || 1000);
@@ -155,7 +168,7 @@ pageScroller = (function($){
 	};
 })(jQuery);
 jQuery(function(){
-	var scroller = pageScroller({
+	window.autofiller = AUTOFILLER({
 		items: '#images',
 		item: '.image',
 		pager: '.pager:first',

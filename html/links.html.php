@@ -1,7 +1,7 @@
 <?php include(APPROOT.'/html/header.html.php'); ?>
 <?php include(APPROOT.'/html/component/menu.html.php'); ?>
 <?php include(APPROOT.'/html/component/pager.html.php'); ?>
-<table id="links">
+<table id="links" class="paged_content" data-source="links.php" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' data-page="<?php print $page ?>">
 	<thead>
 		<tr>
 			<td class="nick">Nick</td>

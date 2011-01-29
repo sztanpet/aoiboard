@@ -8,7 +8,7 @@
 	<?php endif; ?>
 </div>
 <?php $query_params = array_filter(array_merge($urlparams, array('page' => null)), 'strlen')?>
-<div id="images" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' data-page="<?php print $page ?>" data-source="index.php">
+<div id="images" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' data-page="<?php print $page ?>" data-source="index.php" class="paged_content">
 	<?php foreach ($items as $item): ?>
 		<?php include(APPROOT.'/html/component/image.html.php'); ?>
 	<?php endforeach; ?>

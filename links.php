@@ -12,6 +12,11 @@ $css_files = array(
 	'./css/component/menu.css',
 );
 
+$js_files = array(
+	'js/settings.js',
+	'js/shortcuts.js',
+);
+
 $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
 

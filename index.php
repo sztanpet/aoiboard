@@ -7,8 +7,7 @@ include_once(APPROOT.'/lib/functions.php');
 
 $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
-
-if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQUESTED_WITH'], 'XMLHttpRequest') === 0) {
+if (is_xhr_request()) {
 	$css_files = array();
 	$template = 'html/pager.html.php';
 } else {
@@ -23,10 +22,11 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQU
 
 $js_files = array(
 	'js/settings.js',
+	'js/shortcuts.js',
 );
 
 if (setting_enabled('autofill')) {
-	$js_files[] = 'js/pagescroller.js';
+	$js_files[] = 'js/autofiller.js';
 }
 
 $autofillable = true;

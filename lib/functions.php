@@ -164,7 +164,7 @@ function render_iterator($class, $page_limit, $template) {
 
 	$maxpage = max(ceil(ORM::count($class, $params) / $limit) - 1, 0);
 	$offset  = $offset !== null ? (int)$offset : (int)$limit * $maxpage;
-	$page    = $page !== null ? $page : (int)$maxpage;
+	$page    = $page !== null ? (int)$page : (int)$maxpage;
 
 	$items   = ORM::all($class, $params, array('ctime', 'asc'), array($offset, $limit));
 	$items->reverse();
@@ -178,6 +178,11 @@ function render_iterator($class, $page_limit, $template) {
 	);
 
 	extract($GLOBALS);
+
+	// since this is an ajax query with only the data included, we can set expires header safely when not on the last page
+	if (is_xhr_request() && $page !== $maxpage) {
+		header('Expires: '.date('r', strtotime('+1 week', $_SERVER['REQUEST_TIME'])));
+	}
 
 	include(APPROOT.'/'.$template);
 }
@@ -340,4 +345,8 @@ function cmp_model_by_ctime($lhs, $rhs){
 
 function setting_enabled($setting){
 	return (isset($_COOKIE['setting_'.$setting]) && $_COOKIE['setting_'.$setting]) ? true : false;
+}
+
+function is_xhr_request() {
+	return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQUESTED_WITH'], 'XMLHttpRequest') === 0);
 }
