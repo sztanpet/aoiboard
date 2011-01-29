@@ -1,0 +1,56 @@
+.pager {
+	text-align:center;
+	font-weight:bold;
+	margin:0em 10em;
+}
+.pager .left,
+.pager .right,
+.pager .page {
+	display:inline-block;
+	padding:0.42em;
+	border:1px solid #aaa;
+	font-family: monospace;
+}
+.pager span.left,
+.pager span.right,
+.pager span.page {
+	color:#aaa;
+}
+.pager a.left,
+.pager a.right,
+.pager a.page {
+	text-decoration:none;
+}
+.pager .left:link,
+.pager .right:link,
+.pager .page:link {
+	border:1px solid blue;
+}
+
+.pager .left:visited,
+.pager .right:visited, 
+.pager .page:visited {
+	border:1px solid #551A8B;
+}
+
+.pager span.left,
+.pager a.left,
+.pager span.right,
+.pager a.right {
+	width:1em;
+	height:1.25em;
+	display:block;
+	position:fixed;
+}
+
+.pager span.left,
+.pager a.left {
+	left:0.42em;
+	top:0.42em;
+}
+
+.pager span.right,
+.pager a.right {
+	left:2.55em;
+	top:0.42em;
+}
