@@ -1,7 +1,17 @@
-<?php 
+<?php
 $base = dirname($_SERVER['SCRIPT_NAME']);
 $file = substr($_SERVER['SCRIPT_NAME'], strlen($base)+1); // +1 for tailing '/'
+$autofillable = (isset($autofillable) && $autofillable) ? true : false;
+$autofill_enabled = setting_enabled('autofill');
 ?>
+<?php if ($autofillable): ?>
+<div id="autofill_settings">
+	<input type="checkbox" id="autofill" <?php if ($autofill_enabled) { print 'checked'; }?>>
+	<label for="autofill">
+	autofill pages
+	</label>
+</div>
+<?php endif;?>
 <ul id="menu">
 	<li>
 		<?php if ($file != 'index.php'): ?>

@@ -158,7 +158,7 @@ function build_iterator_where($page_limit = array()) {
 	return array($params, $limit, $offset, $page);
 }
 
-function render_iterator($class, $page_limit, $template, $css_files) {
+function render_iterator($class, $page_limit, $template) {
 
 	list($params, $limit, $offset, $page) = build_iterator_where($page_limit);
 
@@ -176,6 +176,8 @@ function render_iterator($class, $page_limit, $template, $css_files) {
 		'week'  => (isset($params['ctime']) && isset($_GET['week']))  ? $_GET['week'] : null,
 		'limit' => ($limit != $page_limit   && isset($_GET['limit'])) ? $limit        : null
 	);
+
+	extract($GLOBALS);
 
 	include(APPROOT.'/'.$template);
 }
@@ -334,4 +336,8 @@ function cmp_model_by_ctime($lhs, $rhs){
 	$l = strtotime($lhs->ctime);
 	$r = strtotime($rhs->ctime);
 	return $r - $l;
+}
+
+function setting_enabled($setting){
+	return (isset($_COOKIE['setting_'.$setting]) && $_COOKIE['setting_'.$setting]) ? true : false;
 }

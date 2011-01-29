@@ -21,4 +21,14 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQU
 	$template = 'html/index.html.php';
 }
 
-render_iterator('Pic', PAGE_LIMIT_PIC, $template, $css_files);
+$js_files = array(
+	'js/settings.js',
+);
+
+if (setting_enabled('autofill')) {
+	$js_files[] = 'js/pagescroller.js';
+}
+
+$autofillable = true;
+
+render_iterator('Pic', PAGE_LIMIT_PIC, $template);

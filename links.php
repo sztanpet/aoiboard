@@ -15,4 +15,4 @@ $css_files = array(
 $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
 
-render_iterator('Link', PAGE_LIMIT_LINK, 'html/links.html.php', $css_files);
+render_iterator('Link', PAGE_LIMIT_LINK, 'html/links.html.php');

@@ -14,6 +14,7 @@ pageScroller = (function($){
 			timer,
 			pager,
 			pager_source,
+			pager_refresh_interval,
 			page_loader_interval,
 			last_loaded_pager_page,
 			pages_loaded_so_far = 0,
@@ -103,7 +104,7 @@ pageScroller = (function($){
 			}); 
 		}
 
-		function on_scroll(){
+		function refresh_pager(){
 			function what_page_are_we_on(){
 				var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item+':first')),
 					scroll_top = win.scrollTop() - (+start_items.eq(0).find('.border').height()),
@@ -147,8 +148,8 @@ pageScroller = (function($){
 		scroll_threshold = opts.scroll_threshold;
 		refresh_last_loaded_page(items);
 
-		win.scroll(on_scroll);
-		page_loader_interval = window.setInterval(check_position, opts.check_interval || 500);
+		page_loader_interval = window.setInterval(check_position, opts.check_interval || 1000);
+		pager_refresh_interval = window.setInterval(refresh_pager, opts.check_interval || 1000);
 
 		return re;
 	};

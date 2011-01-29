@@ -19,31 +19,20 @@ if ($end > $maxpage) {
 	$right_dots = false;
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<title> recece </title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<?php if (isset($css_files) && is_array($css_files)): ?>
-		<?php foreach ($css_files as $file): ?>
-		<link rel="stylesheet" type="text/css" href="<?php print htmlspecialchars($file).'?'.filemtime(APPROOT.'/'.trim($file, './')); ?>" />
-		<?php endforeach; ?>
-	<?php endif; ?>
-</head>
-<body>
-<div class="pager" data-source="pager.php">
+
+<div class="pager">
 	<?php if ($maxpage > 0): ?>
 
 		<?php if ($urlparams['page'] == 0): ?>
 			<span class="left">&laquo;</span>
 		<?php else: ?>
-			<a target="_parent" class="left index_target" href="<?php print base_url().'/pager.php?'.http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
+			<a class="left" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
 		<?php endif; ?>
 
 		<?php if ($urlparams['page'] == $maxpage): ?>
 			<span class="right">&raquo;</span>
 		<?php else: ?>
-			<a target="_parent" class="right index_target" href="<?php print base_url().'/pager.php?'.http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&raquo;</a>
+			<a class="right" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&raquo;</a>
 		<?php endif; ?>
 
 		<?php if ($left_dots): ?>
@@ -52,7 +41,7 @@ if ($end > $maxpage) {
 
 		<?php for ($i = $start; $i <= $end; ++$i): ?>
 			<?php if ($i != $page): ?>
-				<a target="_parent" class="page index_target" href="<?php print base_url().'/pager.php?'.http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
+				<a class="page" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
 			<?php else: ?>
 				<span class="page"><?php print $i; ?></span>
 			<?php endif; ?>
@@ -63,6 +52,3 @@ if ($end > $maxpage) {
 
 <?php endif; ?>
 </div>
-<script src="js/jquery-1.4.4.min.js?<?php print filemtime(APPROOT.'/js/jquery-1.4.4.min.js')?>"></script>
-<script src="js/pager.js?<?php print filemtime(APPROOT.'/js/pager.js')?>"></script>
-</body>

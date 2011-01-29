@@ -16,4 +16,4 @@ $css_files = array(
 	'./css/component/pager.css',
 );
 
-include(APPROOT.'/html/component/pager.html.php');
+include(APPROOT.'/html/component/iframe_pager.html.php');
