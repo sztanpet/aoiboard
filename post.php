@@ -32,12 +32,14 @@ $type = $type['type'];
 
 if (!preg_match('!image/(jpeg|png|gif)!i', $type)) {
 	save_link($url, $nick, $tmp_path);
+	build_rss_files();
 	exit;
 }
 
 if ($size > THREE_MEGS) {
 	error_log('too big image file, saving as link: '.htmlspecialchars($url));
 	save_link($url, $nick, $tmp_path);
+	build_rss_files();
 	exit;
 }
 
