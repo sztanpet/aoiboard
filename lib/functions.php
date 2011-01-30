@@ -245,7 +245,7 @@ function rebuild_url($url) {
 }
 
 function gc_pics() {
-	$not_deleted_pics = ORM::all('pic', array('deleted' => '0'), array('ctime', 'asc'), array('0', '3000'));
+	$not_deleted_pics = ORM::all('pic', array('deleted' => array('value' =>  array('', '0', false, null))), array('ctime', 'asc'), array('0', '3000'));
 	// glob() is disabled on some host :-(
 	// just give up on open_basedir already and choort the php process damint (fpm is my hero)
 	$files = array_diff(scandir(realpath(STORAGE_PATH)), array('.', '..'));
@@ -266,8 +266,8 @@ function gc_pics() {
 		if ($bytes_freed_so_far >= $bytes_to_free) {
 			break;
 		}
-		$bytes_freed_so_far += filesize(realpath($pic->path));
-		file_put_contents(GC_LOG_FILE, '['.date('Y-m-d H:i:s').'] deleting: ('.$pic->id.') size: '.((int)filesize(realpath($pic->path) / 1024))."kb\n", FILE_APPEND);
+		$bytes_freed_so_far += (filesize(realpath($pic->path)) / 1024);
+		file_put_contents(GC_LOG_FILE, '['.date('Y-m-d H:i:s').'] deleting: ('.$pic->id.') size: '.((int)(filesize(realpath($pic->path)) / 1024))."kb\n", FILE_APPEND);
 		$pic->delete();
 	}
 	file_put_contents(GC_LOG_FILE, "\n", FILE_APPEND);

@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 
 define('STORAGE_PATH'   , './pic/');
 define('RSS_PATH'       , APPROOT.'/rss/');
-define('GC_LOG_PATH'    , './log/gc.log');
+define('GC_LOG_FILE'    , './log/gc.log');
 define('TMP_PATH'       , '/tmp/');
 define('THUMB_PATH'     , './thumb/');
 define('THUMB_WIDTH'    , 200);
