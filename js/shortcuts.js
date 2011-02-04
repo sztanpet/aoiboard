@@ -24,3 +24,40 @@ jQuery(function($){
 		}
 	});
 });
+
+jQuery(function($){
+	$('.hide').click( function() {
+		var id = $(this).parents('div.image').attr('data-id'),
+				ids = $.cookie('hideimages');
+		
+		if ( !ids )
+			$.cookie('hideimages', id, {expires: 3650});
+		else
+			$.cookie('hideimages', ids + '|' + id, {expires: 3650});
+		
+		$(this).parents('div.image').hide();
+		return false;
+	});
+	updateHideImages();
+});
+
+function updateHideImages() {
+	
+	var ids = $.cookie('hideimages');
+	if (ids) {
+		ids = ids.split('|');
+		if ( ids.length ) {
+			
+			var currentids = {};
+			$('.image').each( function() {
+				currentids[ $(this).attr('data-id') ] = $(this);
+			});
+			
+			for( i = 0, j = ids.length; i < j; i++ ) {
+				if ( currentids[ ids[ i ] ] )
+					currentids[ ids[ i ] ].hide();
+			}
+		}
+	}
+	
+}

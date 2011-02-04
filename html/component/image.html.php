@@ -7,7 +7,7 @@
 	<?php endif; ?>
 
 	<a href="<?php print '?'.http_build_query(array_merge($urlparams, array('nick' => $item->nick, 'page' => null))) ?>" class="nick"><?php print htmlspecialchars($item->nick); ?></a>
-
+	<a href="#" class="hide">HOLYSHITHIDETHIS</a>
 	<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
 
 	<?php if (trim($item->comment) !== ''): ?>
