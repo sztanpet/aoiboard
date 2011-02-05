@@ -1,4 +1,4 @@
-<div class="image <?php if (isset($item_i) && $item_i === 0) print "page_start"; if (isset($item_i) && $item_i === $limit - 1) print "page_end" ?>" data-id="<?php print $item->id?>" data-ctime="<?php print substr($item->ctime, 0, 10)?>" data-page="<?php print $page?>">
+<div id="image_<?php print $item->id?>" class="image <?php if (isset($item_i) && $item_i === 0) print "page_start"; if (isset($item_i) && $item_i === $limit - 1) print "page_end" ?>" data-id="<?php print $item->id?>" data-ctime="<?php print substr($item->ctime, 0, 10)?>" data-page="<?php print $page?>">
 
 	<?php if (!$item->deleted): ?>
 		<a class="thumb" href="<?php print preg_replace('#/+#', '/', $item->path); ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
@@ -6,8 +6,10 @@
 		<a class="thumb" href="<?php print $item->original_url; ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
 	<?php endif; ?>
 
-	<a href="<?php print '?'.http_build_query(array_merge($urlparams, array('nick' => $item->nick, 'page' => null))) ?>" class="nick"><?php print htmlspecialchars($item->nick); ?></a>
-	<a href="#" class="hide">HOLYSHITHIDETHIS</a>
+	<div>
+		<a href="<?php print '?'.http_build_query(array_merge($urlparams, array('nick' => $item->nick, 'page' => null))) ?>" class="nick"><?php print htmlspecialchars($item->nick); ?></a>
+		<span class="hide">hide</span>
+	</div>
 	<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
 
 	<?php if (trim($item->comment) !== ''): ?>

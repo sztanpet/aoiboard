@@ -44,10 +44,13 @@
 	border:2px solid #551A8B;
 }
 
+#images .image .thumb {
+	clear:both;
+}
 #images .image a.nick,
 #images .image span {
-	display:block;
 	position:relative;
+	display:inline-block;
 	z-index:2;
 }
 
@@ -63,6 +66,7 @@
 	font-size:0.8em;
 	position:relative;
 	z-index:2;
+	display:block;
 }
 
 #bigpic .comment ,
@@ -72,6 +76,7 @@
 	font-size:0.8em;
 	position:relative;
 	z-index:2;
+	display:block;
 }
 
 #bigpic .image .bigpic {
@@ -82,10 +87,17 @@
 }
 
 
+.image .hide {
+	color:blue;
+	cursor:pointer;
+	text-decoration:underline;
+	display:inline-block;
+}
+
 .image .border {
 	bottom:0;
 	display:block;
-	height:300px;
+	height:320px;
 	left:0;
 	position:absolute;
 	width:216px;

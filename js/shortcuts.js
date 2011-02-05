@@ -26,38 +26,30 @@ jQuery(function($){
 });
 
 jQuery(function($){
-	$('.hide').click( function() {
+	function hide_image(image) {
+		image.find('img').attr('src', './img/hidden.png');
+		image.find('.hide').hide();
+	}
+	function replace_hidden_images() {
+		$('#image_'+($.cookie('hideimages') || '').split('|').join(',#image_')).each(function(i, el){
+			hide_image($(el));
+		});
+	}
+	$('body').bind('autofiller.page_loaded', replace_hidden_images);
+
+	$('body').delegate('.hide', 'click', function(){
 		var id = $(this).parents('div.image').attr('data-id'),
-				ids = $.cookie('hideimages');
-		
-		if ( !ids )
+			ids = $.cookie('hideimages');
+
+		if (!ids) {
 			$.cookie('hideimages', id, {expires: 3650});
-		else
+		} else {
 			$.cookie('hideimages', ids + '|' + id, {expires: 3650});
-		
-		$(this).parents('div.image').hide();
+		}
+
+		hide_image($(this).parents('div.image'));
 		return false;
 	});
-	updateHideImages();
+	
+	replace_hidden_images();
 });
-
-function updateHideImages() {
-	
-	var ids = $.cookie('hideimages');
-	if (ids) {
-		ids = ids.split('|');
-		if ( ids.length ) {
-			
-			var currentids = {};
-			$('.image').each( function() {
-				currentids[ $(this).attr('data-id') ] = $(this);
-			});
-			
-			for( i = 0, j = ids.length; i < j; i++ ) {
-				if ( currentids[ ids[ i ] ] )
-					currentids[ ids[ i ] ].hide();
-			}
-		}
-	}
-	
-}

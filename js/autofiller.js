@@ -14,6 +14,7 @@ AUTOFILLER = (function($){
 			timer,
 			pager,
 			pager_source,
+			pager_query,
 			pager_refresh_interval,
 			page_loader_interval,
 			last_loaded_pager_page,
@@ -106,14 +107,15 @@ AUTOFILLER = (function($){
 						window.clearInterval(page_loader_interval);
 						items.parent().append('<a class="more_content" href="?'+$.param($.extend({page: +last_loaded_page - 1}, query))+'">Load more pages</a>');
 					}
+					$('body').trigger('autofiller.page_loaded', [last_loaded_page]);
 				},
 				timeout:5000,
 				error: function() {
-					page_load_ajax_running = false;		
+					page_load_ajax_running = false;	
 				}}
 			);
 		}
-			
+
 		function what_page_are_we_on(){
 			var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item+':first')),
 				scroll_top = win.scrollTop() - (+start_items.eq(0).find('.border').height()),
@@ -143,7 +145,7 @@ AUTOFILLER = (function($){
 				return;
 			}
 			if (last_loaded_pager_page !== page) {
-				pager.attr('src', pager_source+'?'+$.param($.extend({page: page}, query)));
+				pager.attr('src', pager_source+'?'+$.param($.extend({page: page}, pager_query)));
 				last_loaded_pager_page = page;
 			}
 		}
@@ -155,6 +157,7 @@ AUTOFILLER = (function($){
 		items = $(opts.items);
 		source = items.attr('data-source');
 		query = $.parseJSON(items.attr('data-query'));
+		pager_query = $.parseJSON(pager.attr('data-query'));
 		limit = items.find(opts.item).size();
 		viewport_height = win.height();
 		scroll_threshold = opts.scroll_threshold;

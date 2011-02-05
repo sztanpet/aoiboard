@@ -7,6 +7,7 @@ include_once(APPROOT.'/lib/functions.php');
 
 $dbcnx = new PDO(DB_DSN);
 ORM::set_dbcnx($dbcnx);
+
 if (is_xhr_request()) {
 	$css_files = array();
 	$template = 'html/pager.html.php';
