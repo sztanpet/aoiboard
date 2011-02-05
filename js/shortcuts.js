@@ -4,6 +4,7 @@ jQuery(function($){
 	source = content.attr('data-source') == 'index.php' ? '' : content.attr('data-source'), // prevent generating /index.php?... urls instead of /?...
 	query = content.attr('data-query') ? $.parseJSON(content.attr('data-query')) : {};
 
+	delete query.magic;
 
 	function build_url(direction){
 		var re = source + '?';
