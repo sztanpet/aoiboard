@@ -94,10 +94,20 @@
 	display:inline-block;
 }
 
+#images .image .thumb_container {
+	display:table;
+	text-align:center;
+	height:160px;
+	margin:0 auto;
+}
+.image .thumb_container .thumb {
+	display:table-cell;
+	vertical-align:bottom;
+}
 .image .border {
 	bottom:0;
 	display:block;
-	height:320px;
+	height:290px;
 	left:0;
 	position:absolute;
 	width:216px;
