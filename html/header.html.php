@@ -17,4 +17,5 @@
 	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.COMBINED_THUMB_RSS_FILE?>" title="#application combined feed">
 	<link rel="alternate" type="application/rss+xml"  href="<?php print base_url().'/rss/'.COMBINED_FULL_RSS_FILE?>"  title="#application combined feed (full size)">
 </head>
+<?php flush(); ?>
 <body>

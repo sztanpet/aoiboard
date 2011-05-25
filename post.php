@@ -72,7 +72,7 @@ if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
 build_rss_files();
 
 function save_pic($url, $nick, $comment, $saved_file, $ext){
-	$file_name  = '/'.$_SERVER['REQUEST_TIME'].rand(0,100);
+	$file_name  = md5_file($saved_file);
 	$path = STORAGE_PATH.$file_name.'.'.$ext;
 	rename($saved_file, $path);
 
@@ -102,9 +102,6 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 				'comment' => $comment,
 			)), '/dev/null');
 		}
-	} else {
-		unlink($path);
-		unlink($thumb_path);
 	}
 }
 

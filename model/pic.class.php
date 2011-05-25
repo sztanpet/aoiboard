@@ -20,13 +20,13 @@ class Pic extends Model {
 			'access'  => 'r',
 		),
 		'thumb' => array(
-			'access'  => 'r',
+			'access'  => 'rw',
 		),
 		'nick' => array(
 			'access'  => 'r',
 		),
 		'path' => array(
-			'access'  => 'r',
+			'access'  => 'rw',
 		),
 		'comment' => array(
 			'access'  => 'r',
