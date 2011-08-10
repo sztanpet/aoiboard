@@ -65,7 +65,6 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 
 function build_iterator_where($page_limit = array()) {
 	$params = array();
-	$offset = null;
 	$page   = null;
 
 	if (isset($_GET['limit']) && (int)$_GET['limit'] > 0) {
@@ -75,7 +74,6 @@ function build_iterator_where($page_limit = array()) {
 	}
 
 	if (isset($_GET['page']) && (int)$_GET['page'] >= 0) {
-		$offset = $limit * (int)$_GET['page'];
 		$page = (int)$_GET['page'];
 	}
 
@@ -155,19 +153,20 @@ function build_iterator_where($page_limit = array()) {
 		);
 	}
 
-	return array($params, $limit, $offset, $page);
+	return array($params, $limit, $page);
 }
 
 function render_iterator($class, $page_limit, $template) {
 
-	list($params, $limit, $offset, $page) = build_iterator_where($page_limit);
+	list($params, $limit, $page) = build_iterator_where($page_limit);
 
-	$maxpage = max(ceil(ORM::count($class, $params) / $limit) - 1, 0);
-	$offset  = $offset !== null ? (int)$offset : (int)$limit * $maxpage;
-	$page    = $page !== null ? (int)$page : (int)$maxpage;
+	$item_count = ORM::count($class, $params);
+	$maxpage = max(ceil($item_count / $limit) - 1, 0);
 
-	$items   = ORM::all($class, $params, array('ctime', 'asc'), array($offset, $limit));
-	$items->reverse();
+	$page = $page === null ? $maxpage : $page;
+	$offset = ($maxpage - $page) * $limit;
+
+	$items = ORM::all($class, $params, array('ctime', 'desc'), array($offset, $limit));
 
 	$urlparams = array(
 		'page'  => $page,
