@@ -1,9 +1,9 @@
 <div id="image_<?php print $item->id?>" class="image <?php if (isset($item_i) && $item_i === 0) print "page_start"; if (isset($item_i) && $item_i === $limit - 1) print "page_end" ?>" data-id="<?php print $item->id?>" data-ctime="<?php print substr($item->ctime, 0, 10)?>" data-page="<?php print $page?>">
 
 	<?php if (!$item->deleted): ?>
-		<a class="thumb" href="<?php print $item->path; ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
+		<a class="thumb" href="<?php print $item->path; ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
 	<?php else: ?>
-		<a class="thumb" href="<?php print $item->original_url; ?>"><img alt="" src="<?php print $item->thumb; ?>"/></a>
+		<a class="thumb" href="<?php print $item->original_url; ?>"><img alt="" src="<?php print $item->html_thumb(); ?>"/></a>
 	<?php endif; ?>
 
 	<div>

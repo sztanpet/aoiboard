@@ -25,7 +25,7 @@
 	height:40px;
 	background:#d0d0d0;
 	z-index:4;
-	border-bottom:1px solid gray;
+	border-bottom:1px solid #2B3F45;
 }
 
 
@@ -36,7 +36,7 @@
 
 #bigpic .image a:link img ,
 #images .image a:link img {
-	border:1px solid #82A6B0;
+	border:2px solid #82A6B0;
 }
 
 #bigpic .image a:visited img ,

@@ -113,6 +113,6 @@ class Pic extends Model {
 	}
 
 	public function html_thumb() {
-		return $this->thumb.'?'.filemtime(APPROOT.'/'.trim($this->thumb, './'));
+		return str_replace('//', '/', $this->thumb);
 	}
 }
