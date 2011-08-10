@@ -36,22 +36,27 @@
 
 #bigpic .image a:link img ,
 #images .image a:link img {
-	border:1px solid blue;
+	border:1px solid #82A6B0;
 }
 
 #bigpic .image a:visited img ,
 #images .image a:visited img {
-	border:2px solid #551A8B;
+	border:2px solid #E16734;
 }
 
 #images .image .thumb {
 	clear:both;
 }
+
 #images .image a.nick,
 #images .image span {
 	position:relative;
 	display:inline-block;
 	z-index:2;
+}
+
+#images .image .page_banner .letter {
+	display:block;
 }
 
 #bigpic .nick ,
@@ -71,7 +76,6 @@
 
 #bigpic .comment ,
 #images .image .comment {
-	color:gray;
 	font-style:italic;
 	font-size:0.8em;
 	position:relative;
@@ -88,7 +92,7 @@
 
 
 .image .hide {
-	color:blue;
+	color:#82A6B0;
 	cursor:pointer;
 	text-decoration:underline;
 	display:inline-block;
@@ -114,15 +118,15 @@
 }
 
 .image.page_start .border {
-	border-left:1px solid #aaa;
-	border-top:1px solid #aaa;
+	border-left:1px solid #2B3F45;
+	border-top:1px solid #2B3F45;
 }
 .image.prev_page_row .border {
-	border-bottom:1px solid #aaa;
+	border-bottom:1px solid #2B3F45;
 }
 
 .image.next_page_row .border {
-	border-top:1px solid #aaa;
+	border-top:1px solid #2B3F45;
 }
 
 .image.page_start .page_banner,
@@ -134,7 +138,7 @@
 	left:-60px;
 	vertical-align:middle;
 	text-align:center;
-	border-bottom:1px solid #aaa;
+	border-bottom:1px solid #2B3F45;
 }
 
 .image.page_start .page_banner .inner,
@@ -150,7 +154,6 @@
 .image.prev_page_row .page_banner .letter {
 	font-variant:small-caps;
 	font-size:15px;
-	color:gray;
 	font-weight:bold;
 }
 

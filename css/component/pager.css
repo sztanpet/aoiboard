@@ -6,19 +6,20 @@
 	top:0;
 	left:0;
 	height:40px;
+	background-color:#232927;
+	color:#E3D7BF;
 }
 .pager .left,
 .pager .right,
 .pager .page {
 	display:inline-block;
 	padding:0.42em;
-	border:1px solid #aaa;
-	font-family: monospace;
+	font-family:monospace;
+	background:#2B3F45;
 }
 .pager span.left,
 .pager span.right,
 .pager span.page {
-	color:#aaa;
 }
 .pager a.left,
 .pager a.right,
@@ -28,13 +29,13 @@
 .pager .left:link,
 .pager .right:link,
 .pager .page:link {
-	border:1px solid blue;
+	color:#82A6B0;
 }
 
 .pager .left:visited,
 .pager .right:visited, 
 .pager .page:visited {
-	border:1px solid #551A8B;
+	color:#E16734;
 }
 
 .pager span.left,
