@@ -161,10 +161,14 @@ function render_iterator($class, $page_limit, $template) {
 	list($params, $limit, $page) = build_iterator_where($page_limit);
 
 	$item_count = ORM::count($class, $params);
-	$maxpage = max(ceil($item_count / $limit) - 1, 0);
+	$maxpage = (int)max(ceil($item_count / $limit) - 1, 0);
 
 	$page = $page === null ? $maxpage : $page;
-	$offset = ($maxpage - $page) * $limit;
+	$item_count_on_last_page = $item_count - (floor($item_count / $limit) * $limit);
+	$offset = max((($maxpage - $page) * $limit) + ($item_count_on_last_page - $limit),0);
+	if ($maxpage === $page) {
+		$limit = $item_count_on_last_page;
+	}
 
 	$items = ORM::all($class, $params, array('ctime', 'desc'), array($offset, $limit));
 
@@ -277,6 +281,10 @@ function base_url() {
 	return 'http://'.str_replace('\\', '/', $_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']));
 }
 
+function base_path() {
+	return str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+}
+
 function build_rss_files(){
 	include dirname(__FILE__).'/rss_builder.class.php';
 
@@ -344,6 +352,10 @@ function cmp_model_by_ctime($lhs, $rhs){
 
 function setting_enabled($setting){
 	return (isset($_COOKIE['setting_'.$setting]) && $_COOKIE['setting_'.$setting]) ? true : false;
+}
+
+function cookie_list($cookie_name) {
+	return isset($_COOKIE[$cookie_name]) ? explode('|', $_COOKIE[$cookie_name]) : array();
 }
 
 function is_xhr_request() {

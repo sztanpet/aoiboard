@@ -12,8 +12,6 @@ list($params, $limit, $page) = build_iterator_where(PAGE_LIMIT_PIC);
 $maxpage = max(ceil(ORM::count('Pic', $params) / $limit) - 1, 0);
 $urlparams = $_GET;
 
-$css_files = array(
-	'./css/component/pager.css',
-);
+$visited_pages = cookie_list('visited_pages');
 
-include(APPROOT.'/html/component/iframe_pager.html.php');
+include(APPROOT.'/html/component/pager.html.php');

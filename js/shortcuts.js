@@ -36,7 +36,6 @@ jQuery(function($){
 			hide_image($(el));
 		});
 	}
-	$('body').bind('autofiller.page_loaded', replace_hidden_images);
 
 	$('body').delegate('.hide', 'click', function(){
 		var id = $(this).parents('div.image').attr('data-id'),
@@ -51,6 +50,4 @@ jQuery(function($){
 		hide_image($(this).parents('div.image'));
 		return false;
 	});
-	
-	replace_hidden_images();
 });

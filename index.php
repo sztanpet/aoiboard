@@ -30,6 +30,8 @@ if (setting_enabled('autofill')) {
 	$js_files[] = 'js/autofiller.js';
 }
 
+$hidden_images = cookie_list('hideimages');
+$visited_pages = cookie_list('visited_pages');
 $autofillable = true;
 
 render_iterator('Pic', PAGE_LIMIT_PIC, $template);

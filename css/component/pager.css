@@ -32,9 +32,18 @@
 	color:#82A6B0;
 }
 
+.pager .left:active,
+.pager .right:active, 
+.pager .page:active,
+.pager .left:hover,
+.pager .right:hover, 
+.pager .page:hover,
 .pager .left:visited,
 .pager .right:visited, 
-.pager .page:visited {
+.pager .page:visited,
+.pager .left.visited,
+.pager .right.visited, 
+.pager .page.visited {
 	color:#E16734;
 }
 

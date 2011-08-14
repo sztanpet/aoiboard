@@ -1,11 +1,7 @@
 <?php include(APPROOT.'/html/header.html.php'); ?>
 <div id="top">
 	<?php include(APPROOT.'/html/component/menu.html.php'); ?>
-	<?php if (isset($autofillable) && $autofillable && setting_enabled('autofill')):?>
-		<iframe data-source="<?php print base_url().'/pager.php' ?>" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' class="pager" frameborder="0" src="<?php print base_url().'/pager.php?'.http_build_query($urlparams)?>"></iframe>
-	<?php else: ?>
-		<?php include(APPROOT.'/html/component/pager.html.php'); ?>
-	<?php endif; ?>
+	<?php include(APPROOT.'/html/component/pager.html.php'); ?>
 </div>
 <?php $query_params = array_filter(array_merge($urlparams, array('page' => null, 'magic' => MAGIC_VERSION_NUMBER_AGAINST_CACHE_PROBLEMS)), 'strlen')?>
 <div id="images" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' data-page="<?php print $page ?>" data-source="index.php" class="paged_content">

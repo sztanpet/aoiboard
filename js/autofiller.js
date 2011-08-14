@@ -19,6 +19,7 @@ AUTOFILLER = (function($){
 			page_loader_interval,
 			last_loaded_pager_page,
 			pages_loaded_so_far = 0,
+			visited_pages,
 			re = {
 				on_page_load:null,
 				on_bottom:null,
@@ -136,7 +137,12 @@ AUTOFILLER = (function($){
 			re.current_page = distances[0].page;
 			return distances[0].page;
 		}
-			
+
+		function presist_visited_pages(pages){
+			pages = pages.sort(function(a,b){ return (+b) - (+a)});
+			$.cookie('visited_pages', pages.join('|'), {expires: 3650});
+		}
+
 
 		function refresh_pager(){
 			var page = what_page_are_we_on();
@@ -145,8 +151,12 @@ AUTOFILLER = (function($){
 				return;
 			}
 			if (last_loaded_pager_page !== page) {
-				pager.attr('src', pager_source+'?'+$.param($.extend({page: page}, pager_query)));
+				pager.load(pager_source+'?'+$.param($.extend({page: page}, pager_query)));
 				last_loaded_pager_page = page;
+				if ($.inArray(page, visited_pages) === -1) {
+					visited_pages.push(page);
+				}
+				presist_visited_pages(visited_pages);
 			}
 		}
 
@@ -163,6 +173,7 @@ AUTOFILLER = (function($){
 		scroll_threshold = opts.scroll_threshold;
 		refresh_last_loaded_page(items);
 		re.current_page = items.attr('data-page');
+		visited_pages = $.cookie('visited_pages') ? $.cookie('visited_pages').split('|') : [];
 
 		page_loader_interval = window.setInterval(check_position, opts.check_interval || 1000);
 		pager_refresh_interval = window.setInterval(refresh_pager, opts.check_interval || 1000);

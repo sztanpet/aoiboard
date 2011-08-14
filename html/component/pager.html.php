@@ -20,28 +20,28 @@ if ($end > $maxpage) {
 }
 ?>
 
-<div class="pager">
+<div class="pager" data-source="<?php print base_path().'/pager.php' ?>" data-query='<?php print !empty($query_params) ? json_encode($query_params) : '{}'?>' >
 	<?php if ($maxpage > 0): ?>
 
 		<?php if ($urlparams['page'] == 0): ?>
 			<span class="left">&laquo;</span>
 		<?php else: ?>
-			<a class="left" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
+			<a class="left <?php print in_array($urlparams['page']-1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
 		<?php endif; ?>
 
 		<?php if ($urlparams['page'] == $maxpage): ?>
 			<span class="right">&raquo;</span>
 		<?php else: ?>
-			<a class="right" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&raquo;</a>
+			<a class="right <?php print in_array($urlparams['page']+1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&raquo;</a>
 		<?php endif; ?>
 
 		<?php if ($left_dots): ?>
 			<span class="dots">...</span>
 		<?php endif; ?>
 
-		<?php for ($i = $start; $i <= $end; ++$i): ?>
+		<?php for ($i = $start; $i <= $end; ++$i): 	?>
 			<?php if ($i != $page): ?>
-				<a class="page" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
+				<a class="page <?php print in_array($i, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
 			<?php else: ?>
 				<span class="page"><?php print $i; ?></span>
 			<?php endif; ?>

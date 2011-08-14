@@ -33,7 +33,7 @@ class ORM {
 	public static function count($model, $params = array(), $order = '') {
 		list($attr, $table, $id_column) = self::get_model_info($model);
 
-		return self::get_count($attr, $model, $table, $id_column, $params, $order);
+		return self::get_count($attr, $table, $id_column, $params, $order);
 	}
 
 	public static function first($model, $params = array(), $order = '') {
@@ -89,7 +89,7 @@ class ORM {
 		return new ModelIterator($stmt->fetchAll(PDO::FETCH_ASSOC), $class);
 	}
 
-	public static function get_count($attr, $table, $class, $id_column, $params) {
+	public static function get_count($attr, $table, $id_column, $params) {
 		$data      = array();
 
 		$q_params = array();
