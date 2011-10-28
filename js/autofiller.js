@@ -31,7 +31,7 @@ AUTOFILLER = (function($){
 			if (last_loaded_page !== undefined) {
 				prev_last_loaded_page = last_loaded_page;
 			}
-			last_loaded_page = root.find(opts.item+':last').attr('data-page');
+			last_loaded_page = root.find(opts.item).last().attr('data-page');
 			return last_loaded_page;
 		}
 
@@ -101,7 +101,7 @@ AUTOFILLER = (function($){
 				success: function(resp){
 					items.append(resp);
 					refresh_last_loaded_page(items);
-					decorate_with_days(items.find('.page_start:last'));
+					decorate_with_days(items.find('.page_start').last());
 					page_load_ajax_running = false;
 					pages_loaded_so_far += 1;
 					if (pages_loaded_so_far === +opts.max_loaded_pages) {
@@ -109,6 +109,7 @@ AUTOFILLER = (function($){
 						items.parent().append('<a class="more_content" href="?'+$.param($.extend({page: +last_loaded_page - 1}, query))+'">Load more pages</a>');
 					}
 					$('body').trigger('autofiller.page_loaded', [last_loaded_page]);
+					check_position();
 				},
 				timeout:5000,
 				error: function() {
@@ -118,7 +119,7 @@ AUTOFILLER = (function($){
 		}
 
 		function what_page_are_we_on(){
-			var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item+':first')),
+			var start_items = items.find(opts.item+'.page_start').add(items.find(opts.item).eq(0)),
 				scroll_top = win.scrollTop() - (+start_items.eq(0).find('.border').height()),
 				current_item,
 				i, n_items = start_items.size(),
@@ -151,7 +152,9 @@ AUTOFILLER = (function($){
 				return;
 			}
 			if (last_loaded_pager_page !== page) {
-				pager.load(pager_source+'?'+$.param($.extend({page: page}, pager_query)));
+				pager.load(pager_source+'?'+$.param($.extend({page: page}, pager_query)), function(){
+					refresh_pager();
+				});
 				last_loaded_pager_page = page;
 				if ($.inArray(page, visited_pages) === -1) {
 					visited_pages.push(page);
@@ -175,6 +178,9 @@ AUTOFILLER = (function($){
 		re.current_page = items.attr('data-page');
 		visited_pages = $.cookie('visited_pages') ? $.cookie('visited_pages').split('|') : [];
 
+		check_position();
+		refresh_pager();
+
 		page_loader_interval = window.setInterval(check_position, opts.check_interval || 1000);
 		pager_refresh_interval = window.setInterval(refresh_pager, opts.check_interval || 1000);
 
@@ -185,7 +191,7 @@ jQuery(function(){
 	window.autofiller = AUTOFILLER({
 		items: '#images',
 		item: '.image',
-		pager: '.pager:first',
+		pager: '.pager',
 		scroll_threshold:400,
 		check_interval: 500,
 		max_loaded_pages: 13
