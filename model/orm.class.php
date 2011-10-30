@@ -24,22 +24,22 @@ class ORM {
 		return self::$models[$model];
 	}
 
-	public static function all($model, $params = array(), $order = '', $limit = '') {
-		list($attr, $table, $id_column) = self::get_model_info($model);
+	public static function all($class, $params = array(), $order = '', $limit = '') {
+		list($attr, $table, $id_column) = self::get_model_info($class);
 
-		return self::get($attr, $model, $table, $id_column, $params, $order, $limit);
+		return self::get($attr, $table, $class, $id_column, $params, $order, $limit);
 	}
 
-	public static function count($model, $params = array(), $order = '') {
-		list($attr, $table, $id_column) = self::get_model_info($model);
+	public static function count($class, $params = array(), $order = '') {
+		list($attr, $table, $id_column) = self::get_model_info($class);
 
 		return self::get_count($attr, $table, $id_column, $params, $order);
 	}
 
-	public static function first($model, $params = array(), $order = '') {
+	public static function first($class, $params = array(), $order = '') {
 		list($attr, $table, $id_column) = self::get_model_info($model);
 
-		$dbre = self::get($attr, $model, $table, $id_column, $params, $order, '1');
+		$dbre = self::get($attr, $table, $class, $id_column, $params, $order, '1');
 		$dbre->rewind();
 		return $dbre->current();
 	}

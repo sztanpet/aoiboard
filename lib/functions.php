@@ -161,12 +161,16 @@ function render_iterator($class, $page_limit, $template) {
 	list($params, $limit, $page) = build_iterator_where($page_limit);
 
 	$item_count = ORM::count($class, $params);
-	$maxpage = (int)max(ceil($item_count / $limit) - 1, 0);
+	$maxpage = (int)max(floor($item_count / $limit) - 1, 0);
+
+	$item_count_on_last_page = $item_count - (floor($item_count / $limit) * $limit);
+	if ($item_count_on_last_page === 0) {
+		$maxpage -= 1;
+	}
 
 	$page = $page === null ? $maxpage : $page;
-	$item_count_on_last_page = $item_count - (floor($item_count / $limit) * $limit);
-	$offset = max((($maxpage - $page) * $limit) + ($item_count_on_last_page - $limit),0);
-	if ($maxpage === $page) {
+	$offset = max((($maxpage - $page) * $limit) + (($item_count_on_last_page != 0 ? $item_count_on_last_page : $limit) - $limit),0);
+	if ($maxpage === $page && $item_count_on_last_page != 0) {
 		$limit = $item_count_on_last_page;
 	}
 
@@ -278,7 +282,7 @@ function gc_pics() {
 }
 
 function base_url() {
-	return 'http://'.str_replace('\\', '/', $_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']));
+	return 'http://'.str_replace('\\', '/', $_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME'])).'/';
 }
 
 function base_path() {
@@ -360,4 +364,23 @@ function cookie_list($cookie_name) {
 
 function is_xhr_request() {
 	return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strcasecmp($_SERVER['HTTP_X_REQUESTED_WITH'], 'XMLHttpRequest') === 0);
+}
+
+function checksumize() {
+	$pics = ORM::all('Pic', array(), array('ctime', 'asc'));
+
+	foreach ($pics as $pic) {
+		$ext = substr($pic->path, strrpos($pic->path, '.'), strlen($pic->path));
+		print $pic->id."\n";
+		if (is_readable($pic->path)) {
+			rename($pic->path, STORAGE_PATH.'/'.$pic->checksum.$ext);
+			$pic->path = STORAGE_PATH.$pic->checksum.$ext;
+		}
+		if (is_readable($pic->thumb)) {
+			rename($pic->thumb, THUMB_PATH.'/'.$pic->checksum.'.jpg');
+			$pic->thumb = THUMB_PATH.$pic->checksum.'.jpg';
+		}
+		$pic->save();
+		flush();
+	}
 }

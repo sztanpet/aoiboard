@@ -1,5 +1,7 @@
 <?php
-define('APPROOT', dirname(__FILE__));
+define('APPROOT', dirname(__FILE__).'/');
+include APPROOT.'lib/bootstrap.php';
+
 ignore_user_abort(true);
 
 // return as fast as we can, spare the bot
@@ -8,15 +10,7 @@ header("Content-Encoding: none\r\n");
 header("Content-Length: 0");
 flush();
 
-include(APPROOT.'/lib/constants.php');
-include(APPROOT.'/lib/functions.php');
-include(APPROOT.'/model/pic.class.php');
-include(APPROOT.'/model/link.class.php');
-
 define('THREE_MEGS', 3*1024*1024);
-
-$dbcnx = new PDO(DB_DSN);
-ORM::set_dbcnx($dbcnx);
 
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);
@@ -26,20 +20,18 @@ $tmp_path = tempnam(TMP_PATH, 'board_pic');
 
 $header = curl_head($url);
 preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
-$size = $size['size'];
+$size = isset($size['size']) ? $size['size'] : 0;
 preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
-$type = $type['type'];
+$type = isset($type['type']) ? $type['type'] : 'text/html';
 
 if (!preg_match('!image/(jpeg|png|gif)!i', $type)) {
 	save_link($url, $nick, $tmp_path);
-	build_rss_files();
 	exit;
 }
 
 if ($size > THREE_MEGS) {
 	error_log('too big image file, saving as link: '.htmlspecialchars($url));
 	save_link($url, $nick, $tmp_path);
-	build_rss_files();
 	exit;
 }
 
@@ -66,9 +58,6 @@ switch ($image_info['mime']) {
 }
 save_pic($url, $nick, $comment, $tmp_path, $extension);
 
-if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
-	gc_pics();
-}
 build_rss_files();
 
 function save_pic($url, $nick, $comment, $saved_file, $ext){
@@ -95,13 +84,6 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 		if (!$pic->save()) {
 			var_dump($pic->errors());
 		}
-		if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
-			curl_geturl('http://netslum.ath.cx/board/post.php?'.http_build_query(array(
-				'url' => $url,
-				'nick' => $nick,
-				'comment' => $comment,
-			)), '/dev/null');
-		}
 	}
 }
 
@@ -120,11 +102,4 @@ function save_link($url, $nick, $saved_file) {
 	));
 
 	$link->save();
-
-	if ($_SERVER['HTTP_HOST'] !== 'netslum.ath.cx') {
-		curl_geturl('http://netslum.ath.cx/board/post.php?'.http_build_query(array(
-			'url' => $url,
-			'nick' => $nick,
-		)), '/dev/null');
-	}
 }

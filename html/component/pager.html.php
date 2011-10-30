@@ -4,6 +4,7 @@ $to_right   = (int)(PAGER_LIMIT / 2);
 $page       = $urlparams['page'];
 $left_dots  = $maxpage > PAGER_LIMIT ? true : false;
 $right_dots = $maxpage > PAGER_LIMIT ? true : false;
+$visited_pages = isset($visited_pages) ? $visited_pages : array();
 
 $start = $page - $to_left;
 $end   = $page + $to_right;
@@ -24,15 +25,15 @@ if ($end > $maxpage) {
 	<?php if ($maxpage > 0): ?>
 
 		<?php if ($urlparams['page'] == 0): ?>
-			<span class="left">&laquo;</span>
+			<span class="left">&larr;</span>
 		<?php else: ?>
-			<a class="left <?php print in_array($urlparams['page']-1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&laquo;</a>
+			<a class="left <?php print in_array($urlparams['page']-1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] - 1)), '', '&amp;'); ?>">&larr;</a>
 		<?php endif; ?>
 
 		<?php if ($urlparams['page'] == $maxpage): ?>
-			<span class="right">&raquo;</span>
+			<span class="right">&rarr;</span>
 		<?php else: ?>
-			<a class="right <?php print in_array($urlparams['page']+1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&raquo;</a>
+			<a class="right <?php print in_array($urlparams['page']+1, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $urlparams['page'] + 1)), '', '&amp;'); ?>">&rarr;</a>
 		<?php endif; ?>
 
 		<?php if ($left_dots): ?>
