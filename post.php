@@ -20,23 +20,30 @@ $tmp_path = tempnam(TMP_PATH, 'board_pic');
 
 $header = curl_head($url);
 preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
-$size = isset($size['size']) ? $size['size'] : 0;
+$size = isset($size['size']) ? $size['size'] : false;
 preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
-$type = isset($type['type']) ? $type['type'] : 'text/html';
+$type = isset($type['type']) ? $type['type'] : false;
 
-if (!preg_match('!image/(jpeg|png|gif)!i', $type)) {
-	save_link($url, $nick, $tmp_path);
+if ($size === false) {
+	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
 }
 
 if ($size > THREE_MEGS) {
 	error_log('too big image file, saving as link: '.htmlspecialchars($url));
-	save_link($url, $nick, $tmp_path);
+	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
 }
 
 if (curl_geturl($url, $tmp_path) === false) {
 	error_log('cant download '.htmlspecialchars($url));
+	save_link($type, $size, $url, $nick, $tmp_path);
+	exit;
+}
+
+if (!preg_match('!image/(jpeg|png|gif)!i', $type)) {
+	save_link($type, $size, $url, $nick, $tmp_path);
+	exit;
 }
 
 $extension  = '';
@@ -52,7 +59,7 @@ switch ($image_info['mime']) {
 		$extension = 'png';
 		break;
 	default:
-		save_link($url, $nick, $tmp_path);
+		save_link($type, $size, $url, $nick, $tmp_path);
 		exit;
 		break;
 }
@@ -87,10 +94,12 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 	}
 }
 
-function save_link($url, $nick, $saved_file) {
+function save_link($type, $size, $url, $nick, $saved_file) {
 	$title = $url;
-	if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($saved_file), $match)) {
-		$title = html_entity_decode($match['title']);
+	if (stristr($type, 'text/html') !== false && $size < THREE_MEGS) {
+		if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($saved_file), $match)) {
+			$title = html_entity_decode($match['title']);
+		}
 	}
 	unlink($saved_file);
 

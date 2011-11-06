@@ -173,35 +173,44 @@ a:active {
 	margin-top:6px;
 }
 #links {
-	margin-left:5em;
-	margin-top:3em;
+	margin-top:20px;
 	border-collapse:collapse;
+	list-style:none;
+	padding-right:30px;
 }
 
-#links thead {
-	border-bottom:1px solid gray;
-	font-weight:bold;
+#links .id {
+	float:left;
+	display:inline-block;
+	font-size:12px;
+	font-family:monospace;
 }
 
-#links .nick,
-#links .time {
-	width:15%;
+#links .link {
+	margin-bottom:0.25em;
+	padding-bottom:0.1em;
+	border-bottom:1px solid #444;
+}
+#links .url {
+	padding-left:65px;
+}
+#links .url a {
+	vertical-align:bottom;
+	display:inline-block;
+	white-space:nowrap;
+	max-width:90%;
+	overflow:hidden;
+	text-overflow:ellipsis;
 }
 
 #links .nick {
-	text-align:left;
+	font-weight:bold;
 }
-
 #links .time {
-	text-align:right;
+	padding-left:65px;
+	font-size:11px;
 }
 
-#links .url {
-	width:70%;
-	text-align:center;
-	border-left:1px solid gray;
-	border-right:1px solid gray;
-}
 #images {
 	padding-top:42px;
 	padding-left:4em;

@@ -19,6 +19,7 @@ $autofill_enabled = setting_enabled('autofill');
 			</ul>
 
 			<ul class="nav secondary-nav">
+				<?php if ($autofillable): ?>
 				<li class="dropdown">
 				<span class="dropdown-toggle"> settings </span>
 				<ul class="dropdown-menu">
@@ -32,6 +33,7 @@ $autofill_enabled = setting_enabled('autofill');
 					</li>
 				</ul>
 				</li>
+				<?php endif;?>
 			</ul>
 		</div>
 	</div>
