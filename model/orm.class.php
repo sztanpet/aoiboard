@@ -37,7 +37,7 @@ class ORM {
 	}
 
 	public static function first($class, $params = array(), $order = '') {
-		list($attr, $table, $id_column) = self::get_model_info($model);
+		list($attr, $table, $id_column) = self::get_model_info($class);
 
 		$dbre = self::get($attr, $table, $class, $id_column, $params, $order, '1');
 		$dbre->rewind();
