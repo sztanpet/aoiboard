@@ -41,11 +41,7 @@ if ($end > $maxpage) {
 		<?php endif; ?>
 
 		<?php for ($i = $start; $i <= $end; ++$i): 	?>
-			<?php if ($i != $page): ?>
-				<a class="page <?php print in_array($i, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
-			<?php else: ?>
-				<span class="page"><?php print $i; ?></span>
-			<?php endif; ?>
+			<a class="page <?php if ($i == $page): ?> active <?php endif;?> <?php print in_array($i, $visited_pages) ? 'visited' : ''?>" href="?<?php print http_build_query(array_merge($urlparams, array('page' => $i)), '', '&amp;'); ?>"><?php print $i; ?></a>
 		<?php endfor; ?>
 		<?php if ($right_dots): ?>
 			<span class="dots">...</span>

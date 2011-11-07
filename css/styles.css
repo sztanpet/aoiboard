@@ -147,6 +147,10 @@ a:active {
 	color:#E16734;
 }
 
+.pager .page.active {
+	color:#E3D7BF;
+}
+
 .pager span.left,
 .pager a.left,
 .pager span.right,
