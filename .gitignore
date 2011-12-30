@@ -3,3 +3,5 @@ pic
 thumb
 list.csv
 *~
+db/**
+tmp/**
