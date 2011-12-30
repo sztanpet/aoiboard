@@ -1,11 +1,10 @@
 <?php
-define('APPROOT', realpath(dirname(__FILE__).'/../').'/');
+if ( !defined('APPROOT') )
+	require '../Bootstrap.php';
 
 include APPROOT.'lib/pagercalculator.class.php';
 
-require_once 'PHPUnit.php';
-
-class PagerCalculatorTest extends PHPUnit_TestCase {
+class PagerCalculatorTest extends PHPUnit_Framework_TestCase {
 	public function test_max_page() {
 		$mp = PagerCalculator::calculate_maxpage(17, 18);
 		$this->assertEquals(0, $mp);
@@ -50,8 +49,3 @@ class PagerCalculatorTest extends PHPUnit_TestCase {
 		$this->assertEquals(6, $lpc);
 	}
 }
-
-$runner = new PHPUnit;
-$suite = new PHPUnit_TestSuite('PagerCalculatorTest');
-$result = $runner->run($suite);
-print $result->toHTML();
