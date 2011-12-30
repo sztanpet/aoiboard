@@ -2,6 +2,7 @@
 include APPROOT.'lib/constants.php';
 include APPROOT.'lib/functions.php';
 include APPROOT.'lib/rss_builder.class.php';
+include APPROOT.'lib/pagercalculator.class.php';
 include APPROOT.'model/pic.class.php';
 include APPROOT.'model/link.class.php';
 

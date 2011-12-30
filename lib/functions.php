@@ -159,20 +159,14 @@ function build_iterator_where($page_limit = array()) {
 function render_iterator($class, $page_limit, $template) {
 
 	list($params, $limit, $page) = build_iterator_where($page_limit);
-
 	$item_count = ORM::count($class, $params);
-	$maxpage = (int)max(floor($item_count / $limit) - 1, 0);
 
-	$item_count_on_last_page = $item_count - (floor($item_count / $limit) * $limit);
-	if ($item_count_on_last_page === 0) {
-		$maxpage -= 1;
-	}
+	$pager_calculator = new PagerCalculator($item_count, $limit);
+	$page = $pager_calculator->calculate($page);
 
-	$page = $page === null ? $maxpage : $page;
-	$offset = max((($maxpage - $page) * $limit) + (($item_count_on_last_page != 0 ? $item_count_on_last_page : $limit) - $limit),0);
-	if ($maxpage === $page && $item_count_on_last_page != 0) {
-		$limit = $item_count_on_last_page;
-	}
+	$offset = $pager_calculator->get_offset();
+   	$limit = $pager_calculator->get_limit() ;
+   	$maxpage = $pager_calculator->get_maxpage();
 
 	$items = ORM::all($class, $params, array('ctime', 'desc'), array($offset, $limit));
 
