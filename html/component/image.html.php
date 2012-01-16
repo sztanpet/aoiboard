@@ -26,7 +26,7 @@ if (in_array($item->id, $hidden_images)) {
 		</div>
 		<span class="time"><?php print htmlspecialchars($item->ctime); ?></span>
 
-		<?php if (trim($item->comment) !== ''): ?>
+		<?php if (trim($item->comment) !== '' && !$hidden): ?>
 			<span class="comment"><?php print htmlspecialchars($item->comment); ?></span>
 		<?php endif; ?>
 

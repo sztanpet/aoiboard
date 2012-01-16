@@ -166,6 +166,7 @@ jQuery(function($){
 	function hide_image(image) {
 		image.find('img').attr('src', './img/hidden.png');
 		image.find('.hide').hide();
+		image.find('.comment').hide();
 	}
 	function replace_hidden_images() {
 		$('#image_'+($.cookie('hideimages') || '').split('|').join(',#image_')).each(function(i, el){
