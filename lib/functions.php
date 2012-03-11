@@ -188,7 +188,7 @@ function render_iterator($class, $page_limit, $template) {
 	include(APPROOT.'/'.$template);
 }
 
-function curl_geturl($url, $filename) {
+function curl_geturl($url, $filename, $referer = null) {
 	if (($fd = fopen($filename, 'w')) === false) {
 		return false;
 	}
@@ -201,6 +201,9 @@ function curl_geturl($url, $filename) {
 	curl_setopt($curl, CURLOPT_HEADER        , false);
 	curl_setopt($curl, CURLOPT_HTTP_VERSION  , CURL_HTTP_VERSION_1_1);
 	curl_setopt($curl, CURLOPT_FILE          , $fd);
+	if ($referer) {
+		curl_setopt($curl, CURLOPT_REFERER, $referer);
+	}
 
 	$ret = curl_exec($curl);
 	curl_close($curl);
@@ -209,7 +212,7 @@ function curl_geturl($url, $filename) {
 	return $ret;
 }
 
-function curl_head($url) {
+function curl_head($url, $referer = null) {
 	$url = rebuild_url($url);
 
 	$curl = curl_init($url);
@@ -218,6 +221,9 @@ function curl_head($url) {
 	curl_setopt($curl, CURLOPT_HEADER        , true);
 	curl_setopt($curl, CURLOPT_NOBODY        , true);
 	curl_setopt($curl, CURLOPT_HTTP_VERSION  , CURL_HTTP_VERSION_1_1);
+	if ($referer) {
+		curl_setopt($curl, CURLOPT_REFERER, $referer);
+	}
 
 	$ret = curl_exec($curl);
 	curl_close($curl);

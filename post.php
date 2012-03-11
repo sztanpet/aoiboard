@@ -18,7 +18,19 @@ $comment = rawurldecode(isset($_REQUEST['comment']) ? trim($_REQUEST['comment'])
 
 $tmp_path = tempnam(TMP_PATH, 'board_pic');
 
-$header = curl_head($url);
+$referer = null;
+
+$referer_map = array(
+	'yande.re' => 'http://yande.re/post/',
+);
+
+foreach ($referer_map as $needle => $ref) {
+	if (stristr($url, $needle) !== false) {
+		$referer = $ref;
+	}
+}
+
+$header = curl_head($url, $referer);
 preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
 $size = isset($size['size']) ? $size['size'] : false;
 preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
@@ -35,7 +47,7 @@ if ($size > THREE_MEGS) {
 	exit;
 }
 
-if (curl_geturl($url, $tmp_path) === false) {
+if (curl_geturl($url, $tmp_path, $referer) === false) {
 	error_log('cant download '.htmlspecialchars($url));
 	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
