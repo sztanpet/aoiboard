@@ -235,6 +235,7 @@ a:active {
 	position:relative;
 	z-index:2;
 	word-spacing:0px;
+	min-height:185px;
 }
 
 #top {
