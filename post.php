@@ -22,6 +22,7 @@ $referer = null;
 
 $referer_map = array(
 	'yande.re' => 'http://yande.re/post/',
+	'chan.sankakucomplex.com' => 'http://chan.sankakucomplex.com/',
 );
 
 foreach ($referer_map as $needle => $ref) {
