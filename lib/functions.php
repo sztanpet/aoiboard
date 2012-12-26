@@ -290,8 +290,6 @@ function base_path() {
 }
 
 function build_rss_files(){
-	include dirname(__FILE__).'/rss_builder.class.php';
-
 	$pics  = ORM::all('pic', array('deleted' => ''), array('id', 'desc'), array('0', '100'))->to_a();
 	$links = ORM::all('link', array(), array('id', 'desc'), array(0, 100))->to_a();
 	$combined = array_merge($pics, $links);
