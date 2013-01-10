@@ -10,7 +10,7 @@ header("Content-Encoding: none\r\n");
 header("Content-Length: 0");
 flush();
 
-define('THREE_MEGS', 3*1024*1024);
+define('FIVE_MEGS', 5*1024*1024);
 
 $url     = rawurldecode($_REQUEST['url']);
 $nick    = rawurldecode($_REQUEST['nick']);
@@ -42,7 +42,7 @@ if ($size === false) {
 	exit;
 }
 
-if ($size > THREE_MEGS) {
+if ($size > FIVE_MEGS) {
 	error_log('too big image file, saving as link: '.htmlspecialchars($url));
 	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
