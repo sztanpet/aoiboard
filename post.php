@@ -109,7 +109,7 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 
 function save_link($type, $size, $url, $nick, $saved_file) {
 	$title = $url;
-	if (stristr($type, 'text/html') !== false && $size < THREE_MEGS) {
+	if (stristr($type, 'text/html') !== false && $size < FIVE_MEGS) {
 		if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($saved_file), $match)) {
 			$title = html_entity_decode($match['title']);
 		}
