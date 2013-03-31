@@ -53,12 +53,6 @@ try {
 	exit;
 }
 
-if ($type && !preg_match('!image/(jpeg|png|gif)!i', $type)) {
-	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\ttype($type) seem to be no image saving as link\t$url\n", FILE_APPEND);
-	save_link($type, $size, $url, $nick, $tmp_path);
-	exit;
-}
-
 $extension = '';
 $image_info = getimagesize($tmp_path);
 switch ($image_info['mime']) {
