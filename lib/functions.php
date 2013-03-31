@@ -165,8 +165,8 @@ function render_iterator($class, $page_limit, $template) {
 	$page = $pager_calculator->calculate($page);
 
 	$offset = $pager_calculator->get_offset();
-   	$limit = $pager_calculator->get_limit() ;
-   	$maxpage = $pager_calculator->get_maxpage();
+	$limit = $pager_calculator->get_limit();
+	$maxpage = $pager_calculator->get_maxpage();
 
 	$items = ORM::all($class, $params, array('ctime', 'desc'), array($offset, $limit));
 
@@ -188,7 +188,7 @@ function render_iterator($class, $page_limit, $template) {
 	include(APPROOT.'/'.$template);
 }
 
-function curl_geturl($url, $filename, $referer = null) {
+function curl_geturl($url, $filename, $referer = null, $options = array()) {
 	if (($fd = fopen($filename, 'w')) === false) {
 		return false;
 	}
@@ -201,13 +201,33 @@ function curl_geturl($url, $filename, $referer = null) {
 	curl_setopt($curl, CURLOPT_HEADER        , false);
 	curl_setopt($curl, CURLOPT_HTTP_VERSION  , CURL_HTTP_VERSION_1_1);
 	curl_setopt($curl, CURLOPT_FILE          , $fd);
+	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+
+	if (isset($options['size_limit'])) {
+		$full_resp_length = 0;
+		curl_setopt($curl, CURLOPT_WRITEFUNCTION, function($curl, $resp_chunk) use (&$full_resp_length, $fd, $options) {
+			$chunk_size = strlen($resp_chunk);
+			$full_resp_length += $chunk_size;
+			if ($full_resp_length > $options['size_limit']) {
+				return false;
+			} else {
+				return fwrite($fd, $resp_chunk);
+			}
+		});
+	}
+
 	if ($referer) {
 		curl_setopt($curl, CURLOPT_REFERER, $referer);
 	}
 
 	$ret = curl_exec($curl);
+	$err = curl_error($curl);
 	curl_close($curl);
 	fclose($fd);
+
+	if ($ret === false) {
+		throw new Exception($err);
+	}
 
 	return $ret;
 }
@@ -381,4 +401,8 @@ function checksumize() {
 		$pic->save();
 		flush();
 	}
+}
+
+function last_fetch_log_file() {
+	return basename(end(glob(LOG_PATH.'/fetch-*.log')));
 }

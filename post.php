@@ -3,7 +3,6 @@ define('APPROOT', dirname(__FILE__).'/');
 include APPROOT.'lib/bootstrap.php';
 
 ignore_user_abort(true);
-
 // return as fast as we can, spare the bot
 header("Connection: close\r\n");
 header("Content-Encoding: none\r\n");
@@ -17,18 +16,19 @@ $nick    = rawurldecode($_REQUEST['nick']);
 $comment = rawurldecode(isset($_REQUEST['comment']) ? trim($_REQUEST['comment']) : '');
 
 $tmp_path = tempnam(TMP_PATH, 'board_pic');
-
-$referer = null;
+$referer = $url;
+$fetch_log = LOG_PATH.'/fetch-'.date('Y-m-d').'.log';
 
 $referer_map = array(
-	'yande.re' => 'http://yande.re/post/',
-	'sankakustatic.com' => 'http://chan.sankakucomplex.com/post/show/42',
-        'cs.sankakucomplex.com' => 'http://chan.sankakucomplex.com/post/show/42',
-	'is.sankakucomplex.com' => 'http://idol.sankakucomplex.com/post/show/42',
+	'yande.re'				 => 'http://yande.re/post/',
+	'sankakustatic.com'		 => 'http://chan.sankakucomplex.com/post/show/42',
+	'c\d.sankakucomplex.com' => 'http://chan.sankakucomplex.com/post/show/42',
+	'cs.sankakucomplex.com'  => 'http://chan.sankakucomplex.com/post/show/42',
+	'is.sankakucomplex.com'  => 'http://idol.sankakucomplex.com/post/show/42',
 );
 
-foreach ($referer_map as $needle => $ref) {
-	if (stristr($url, $needle) !== false) {
+foreach ($referer_map as $pattern => $ref) {
+	if (preg_match('/'.$pattern.'/i', $url)) {
 		$referer = $ref;
 	}
 }
@@ -39,29 +39,27 @@ $size = isset($size['size']) ? $size['size'] : false;
 preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
 $type = isset($type['type']) ? $type['type'] : false;
 
-if ($size === false) {
+if ($size !== false && $size > FIVE_MEGS) {
+	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tover size limit saving as link\t$url\n", FILE_APPEND);
 	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
 }
 
-if ($size > FIVE_MEGS) {
-	error_log('too big image file, saving as link: '.htmlspecialchars($url));
+try {
+	curl_geturl($url, $tmp_path, $referer, array('size_limit' => FIVE_MEGS));
+} catch (Exception $e) {
+	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tcan't fetch url:".$e->getMessage(). " saving as link\t$url\n", FILE_APPEND);
 	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
 }
 
-if (curl_geturl($url, $tmp_path, $referer) === false) {
-	error_log('cant download '.htmlspecialchars($url));
+if ($type && !preg_match('!image/(jpeg|png|gif)!i', $type)) {
+	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\ttype($type) seem to be no image saving as link\t$url\n", FILE_APPEND);
 	save_link($type, $size, $url, $nick, $tmp_path);
 	exit;
 }
 
-if (!preg_match('!image/(jpeg|png|gif)!i', $type)) {
-	save_link($type, $size, $url, $nick, $tmp_path);
-	exit;
-}
-
-$extension  = '';
+$extension = '';
 $image_info = getimagesize($tmp_path);
 switch ($image_info['mime']) {
 	case 'image/gif':
@@ -74,6 +72,7 @@ switch ($image_info['mime']) {
 		$extension = 'png';
 		break;
 	default:
+		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tcant recognize mime type: {$image_info['mime']} saving as link\t$url\n", FILE_APPEND);
 		save_link($type, $size, $url, $nick, $tmp_path);
 		exit;
 		break;
@@ -83,7 +82,8 @@ save_pic($url, $nick, $comment, $tmp_path, $extension);
 build_rss_files();
 
 function save_pic($url, $nick, $comment, $saved_file, $ext){
-	$file_name  = md5_file($saved_file);
+	global $fetch_log;
+	$file_name	= md5_file($saved_file);
 	$path = STORAGE_PATH.$file_name.'.'.$ext;
 	rename($saved_file, $path);
 
@@ -94,36 +94,46 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 	chmod($thumb_path, 0664);
 
 	$pic = new Pic(array(
-		'nick'         => $nick,
+		'nick'		   => $nick,
 		'original_url' => $url,
-		'path'         => $path,
-		'comment'      => $comment,
-		'thumb'        => $thumb_path,
-		'ctime'        => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
+		'path'		   => $path,
+		'comment'	   => $comment,
+		'thumb'		   => $thumb_path,
+		'ctime'		   => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
 	));
 
 	if (ORM::all('pic', array('checksum' => $pic->checksum))->count() === 0) {
-		if (!$pic->save()) {
-			var_dump($pic->errors());
+		if ($pic->save()) {
+			file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tpic save SUCCESS\t$url\n", FILE_APPEND);
+		} else {
+			file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\terror saving image: ".var_export($pic->errors(), true)."\t$url\n", FILE_APPEND);
 		}
+	} else {
+		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tduplicate image\t$url\n", FILE_APPEND);
 	}
 }
 
 function save_link($type, $size, $url, $nick, $saved_file) {
+	global $fetch_log;
 	$title = $url;
 	if (stristr($type, 'text/html') !== false && $size < FIVE_MEGS) {
 		if (preg_match('!<title>(?<title>.*?)</title>!sim', file_get_contents($saved_file), $match)) {
 			$title = html_entity_decode($match['title']);
 		}
 	}
+
 	unlink($saved_file);
 
-	$link = new Link(array(
-		'nick'  => $nick,
-		'title' => $title,
-		'url'   => $url,
-		'ctime' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
-	));
+	if (ORM::all('link', array('url' => $url))->count() === 0) {
+		$link = new Link(array(
+			'nick'	=> $nick,
+			'title' => $title,
+			'url'	=> $url,
+			'ctime' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
+		));
 
-	$link->save();
+		$link->save();
+	} else {
+		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tduplicate link\t$url\n", FILE_APPEND);
+	}
 }

@@ -21,9 +21,10 @@ $autofill_enabled = setting_enabled('autofill');
 			<ul class="nav secondary-nav">
 				<?php if ($autofillable): ?>
 				<li class="dropdown">
-				<span class="dropdown-toggle"> settings </span>
+                <span class="dropdown-toggle"> <img src="<?php print base_url()?>img/settings.png" width="16" height="16"> </span>
 				<ul class="dropdown-menu">
 					<li id="autofill_settings">
+                    <a href="<?php print base_url().'log/'.last_fetch_log_file()?>"> Fetchlog </a>
 					<?php if ($autofillable): ?>
 					<a href="#">
 						<input type="checkbox" id="autofill" <?php if ($autofill_enabled) { print 'checked'; }?>>
