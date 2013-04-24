@@ -88,6 +88,13 @@ function build_iterator_where($page_limit = array()) {
 		);
 	}
 
+	if (isset($_GET['url'])) {
+		$params['original_url'] = array(
+			'cmp'   => ' like ',
+			'value' => '%'.$_GET['url'].'%',
+		);
+	}
+
 	if (isset($_GET['day'])) {
 		if ($_GET['day'] == 'last' || $_GET['day'] == 'tomorrow') {
 			$params['ctime'] = array(
@@ -175,6 +182,7 @@ function render_iterator($class, $page_limit, $template) {
 		'nick'  => isset($params['nick']) && $params['nick'] !== null ? rawurlencode($params['nick']) : null,
 		'day'   => (isset($params['ctime']) && isset($_GET['day']))   ? $_GET['day']  : null,
 		'week'  => (isset($params['ctime']) && isset($_GET['week']))  ? $_GET['week'] : null,
+		'url'   => (isset($params['original_url']) && isset($_GET['url'])) ? $_GET['url']  : null,
 		'limit' => ($limit != $page_limit   && isset($_GET['limit'])) ? $limit        : null
 	);
 
