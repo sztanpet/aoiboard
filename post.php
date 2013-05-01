@@ -37,7 +37,6 @@ $header = curl_head($url, $referer);
 preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
 $size = isset($size['size']) ? $size['size'] : false;
 preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
-$type = isset($type['type']) ? $type['type'] : false;
 
 if ($size !== false && $size > FIVE_MEGS) {
 	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tover size limit saving as link\t$url\n", FILE_APPEND);
@@ -65,8 +64,12 @@ switch ($image_info['mime']) {
 	case 'image/png':
 		$extension = 'png';
 		break;
-	default:
-		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tcant recognize mime type: {$image_info['mime']} saving as link\t$url\n", FILE_APPEND);
+    default:
+        $finfo = finfo_open($tmp_path, FILEINFO_MIME_TYPE);
+        $finfo_mime = finfo_file($finfo, $tmp_path);
+        finfo_close($finfo);
+
+		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tcant recognize mime type: '{$image_info['mime']}', fileinfo says its a '$finfo_mime', saving as link\t$url\n", FILE_APPEND);
 		save_link($type, $size, $url, $nick, $tmp_path);
 		exit;
 		break;
