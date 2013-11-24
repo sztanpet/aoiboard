@@ -21,7 +21,6 @@ a:active {
 }
 
 .topbar {
-	overflow:hidden;
 	text-align:center;
 }
 #menu {
@@ -56,6 +55,11 @@ a:active {
 	color:white;
 }
 
+.nav {
+	position:relative;
+	z-index:1;
+}
+
 .nav > a {
 	outline:none; 
 	
@@ -81,11 +85,14 @@ a:active {
 	text-align:center;
 	font-weight:bold;
 	color:#E3D7BF;
-	position:relative;
-	top:-42px;
+	position:absolute;
+	top:0;
 	display:inline-block;
 	margin:0;
-	left:30px;
+	width:100%;
+	text-align:center;
+	left:0;
+	z-index:0;
 }
 
 .pager .left,
@@ -178,7 +185,7 @@ a:active {
 	margin-top:6px;
 }
 #links {
-	margin-top:20px;
+	margin-top:60px;
 	border-collapse:collapse;
 	list-style:none;
 	padding-right:30px;

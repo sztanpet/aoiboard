@@ -36,8 +36,8 @@ $autofill_enabled = setting_enabled('autofill');
 				</li>
 				<?php endif;?>
 			</ul>
+            <?php include(APPROOT.'/html/component/pager.html.php'); ?>
 		</div>
 	</div>
 	<!-- /topbar-inner -->
-	<?php include(APPROOT.'/html/component/pager.html.php'); ?>
 </div>
