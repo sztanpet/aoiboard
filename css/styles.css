@@ -292,6 +292,8 @@ a:active {
 	position:relative;
 	display:inline-block;
 	z-index:2;
+	overflow: hidden;
+	text-overflow:ellipsis;
 }
 
 #images .image .page_banner .letter {
