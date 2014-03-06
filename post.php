@@ -64,10 +64,10 @@ switch ($image_info['mime']) {
 	case 'image/png':
 		$extension = 'png';
 		break;
-    default:
-        $finfo = finfo_open($tmp_path, FILEINFO_MIME_TYPE);
-        $finfo_mime = finfo_file($finfo, $tmp_path);
-        finfo_close($finfo);
+	default:
+		$finfo = finfo_open($tmp_path, FILEINFO_MIME_TYPE);
+		$finfo_mime = finfo_file($finfo, $tmp_path);
+		finfo_close($finfo);
 
 		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tcant recognize mime type: '{$image_info['mime']}', fileinfo says its a '$finfo_mime', saving as link\t$url\n", FILE_APPEND);
 		save_link($type, $size, $url, $nick, $tmp_path);
@@ -85,7 +85,7 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 	rename($saved_file, $path);
 
 	$thumb_path = THUMB_PATH.$file_name.'.jpg';
-	create_thumb($path, $thumb_path);
+	list($w, $h) = create_thumb($path, $thumb_path);
 
 	chmod($path, 0664);
 	chmod($thumb_path, 0664);
@@ -96,6 +96,8 @@ function save_pic($url, $nick, $comment, $saved_file, $ext){
 		'path'		   => $path,
 		'comment'	   => $comment,
 		'thumb'		   => $thumb_path,
+		'width'		   => $w,
+		'height'	   => $h,
 		'ctime'		   => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']),
 	));
 

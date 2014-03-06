@@ -36,6 +36,12 @@ class Pic extends Model {
 			'access'  => 'r',
 			'read'    => 'get_checksum',
 		),
+		'width' => array(
+			'access'  => 'rw',
+		),
+		'height' => array(
+			'access'  => 'rw',
+		),
 		'deleted' => array(
 			'access'  => 'rw',
 			'default' => false,
@@ -89,7 +95,6 @@ class Pic extends Model {
 			'pubDate' => $this->ctime,
 		);
 	}
-
 
 	protected function get_checksum() {
 		if (isset($this->data['path']) && !isset($this->data['checksum'])) {

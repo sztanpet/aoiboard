@@ -2,19 +2,22 @@
 
 $thumb_path = $item->html_thumb();
 $hidden = false;
+$w = $item->width;
+$h = $item->height;
 if (in_array($item->id, $hidden_images)) {
 	$hidden = true;
 	$thumb_path = './img/hidden.png';
+	$w = 200;
+	$h = 200;
 }
-
 ?>
 
 <div id="image_<?php print $item->id?>" class="image <?php if (isset($item_i) && $item_i === 0) print "page_start"; if (isset($item_i) && $item_i === $limit - 1) print "page_end" ?>" data-id="<?php print $item->id?>" data-ctime="<?php print substr($item->ctime, 0, 10)?>" data-page="<?php print $page?>">
 
 	<?php if (!$item->deleted): ?>
-		<a class="thumb" href="<?php print $item->path; ?>"><img alt="" src="<?php print $thumb_path; ?>"/></a>
+		<a class="thumb" href="<?php print $item->path; ?>"><img width="<?php print $w?>" height="<?php print $h?>" alt="" src="<?php print $thumb_path; ?>"/></a>
 	<?php else: ?>
-		<a class="thumb" href="<?php print $item->original_url; ?>"><img alt="" src="<?php print $thumb_path; ?>"/></a>
+		<a class="thumb" href="<?php print $item->original_url; ?>"><img width="<?php print $w?>" height="<?php print $h?>" alt="" src="<?php print $thumb_path; ?>"/></a>
 	<?php endif; ?>
 
 	<div class="metadata">

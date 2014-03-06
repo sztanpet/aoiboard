@@ -60,7 +60,7 @@ function create_thumb($path, $thumb_path, $width = THUMB_WIDTH, $height = THUMB_
 	chmod($thumb_path, 0664);
 	imageDestroy($o_im);
 	imageDestroy($t_im);
-	return true;
+	return array($t_wd, $t_ht);
 }
 
 function build_iterator_where($page_limit = array()) {
@@ -407,6 +407,23 @@ function checksumize() {
 			$pic->thumb = THUMB_PATH.$pic->checksum.'.jpg';
 		}
 		$pic->save();
+		flush();
+	}
+}
+
+function measurize() {
+	$pics = ORM::all('Pic');
+
+	print "<pre>";
+	foreach ($pics as $i => $pic) {
+		list($w, $h) = getimagesize($pic->thumb);
+		$pic->width = $w;
+		$pic->height = $h;
+		$pic->save();
+		print ".";
+		if ($i % 100 == 0 && $i != 0) {
+			print "\n$i\n";
+		}
 		flush();
 	}
 }
