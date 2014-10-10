@@ -34,9 +34,12 @@ foreach ($referer_map as $pattern => $ref) {
 }
 
 $header = curl_head($url, $referer);
-preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
-$size = isset($size['size']) ? $size['size'] : false;
-preg_match('/Content-Type:\s?(?<type>\S+)/i', $header, $type);
+list($size, $type) = get_size_and_type($header);
+if (preg_match('/\.gifv$/', $url) && $type == 'text/html') {
+	$url = preg_replace('/\.gifv$/', '.gif', $url);
+	$header = curl_head($url, $referer);
+	list($size, $type) = get_size_and_type($header);
+}
 
 if ($size !== false && $size > FIVE_MEGS) {
 	file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tover size limit saving as link\t$url\n", FILE_APPEND);
@@ -135,4 +138,12 @@ function save_link($type, $size, $url, $nick, $saved_file) {
 	} else {
 		file_put_contents($fetch_log, "[".date('Y-m-d H:i:s')."]\t$nick\tduplicate link\t$url\n", FILE_APPEND);
 	}
+}
+
+function get_size_and_type($header) {
+	preg_match('/Content-Length:\s?(?<size>\d+)/i', $header, $size);
+	$size = isset($size['size']) ? $size['size'] : false;
+	preg_match('/Content-Type:\s?(?<type>[^;\s]+)/i', $header, $type);
+	$type = isset($type['type']) ? strtolower($type['type']) : false;
+	return array($size, $type);
 }

@@ -429,5 +429,5 @@ function measurize() {
 }
 
 function last_fetch_log_file() {
-	return basename(end(glob(LOG_PATH.'/fetch-*.log')));
+	return basename(end((glob(LOG_PATH.'/fetch-*.log'))));
 }

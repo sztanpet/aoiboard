@@ -104,7 +104,7 @@ class ORM {
 
 		$stmt = self::$dbcnx->prepare($q);
 		$stmt->execute($q_params);
-		return reset(array_values($stmt->fetch(PDO::FETCH_ASSOC)));
+		return (reset(array_values($stmt->fetch(PDO::FETCH_ASSOC))));
 	}
 
 	private static function build_where($attrs, $id_column, $params) {
